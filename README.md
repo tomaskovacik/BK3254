@@ -12,7 +12,7 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 ## SUPPORTED UART COMMANDS
 
 |Serial command |Parameter Description | Instruction Description Function | Responce|
-|-----------------------------------------------------------------------------------|
+|---------------|----------------------|----------------------------------|---------|
 |COM+SNAME+XXX\r\n |XXX: New name, max16chars | Modify the bluetooth name, take efect after restart of chip | correct: OK\n / error: ERR\n|
 |BT+PR\r\n | | Pairing|
 |BT+AC\r\n | | The last paired device connected (connect to last device?)|
@@ -58,7 +58,7 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 ## Query / feedback command
 
 |Serial command | description | Bluetooth return information|
-|-----------------------------------------------------------|
+|---------------|-------------|-----------------------------|
 |AT+MR\r\n | Queries Bluetooth address | AD: 191919191919\r\n|
 |AT+MP\r\n | PIN Code query | PN: 0000\r\n|
 |AT+MN\r\n | Bluetooth name query | NA: BK3254\r\n|
@@ -70,7 +70,7 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 ## BLUETOOTH STATE SEND BY MODULE
 
 |Serial command | description|
-|----------------------------|
+|---------------|------------|
 |EEROR\n | error|
 |OK\n | |
 |II\r\n | connection succeeded|
