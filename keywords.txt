@@ -1,0 +1,69 @@
+BK3254	KEYWORD1
+begin	KEYWORD2
+sendData	KEYWORD2
+sendCOMData	KEYWORD2
+sendFMData	KEYWORD2
+sendBTData	KEYWORD2
+resetModule	KEYWORD2
+getNextEventFromBT	KEYWORD2
+pairingInit	KEYWORD2
+connectLastDevice	KEYWORD2
+disconnect	KEYWORD2
+callAnsware	KEYWORD2
+callReject	KEYWORD2
+callHangUp	KEYWORD2
+callRedial	KEYWORD2
+musicTogglePlayPause	KEYWORD2
+musicNextTrack	KEYWORD2
+fmNextTrack	KEYWORD2
+musicPreviousTrack	KEYWORD2
+fmPreviousTrack	KEYWORD2
+volumeUp	KEYWORD2
+volumeDown	KEYWORD2
+volumeSet	KEYWORD2
+volumeGet	KEYWORD2
+shutdown	KEYWORD2
+standby		KEYWORD2
+powerup		KEYWORD2
+switchInput	KEYWORD2
+switchInputToBluetooth	KEYWORD2
+switchInputToCard	KEYWORD2
+switchInputToAux	KEYWORD2
+switchInputToFm	KEYWORD2
+switchInputToUsb	KEYWORD2
+musicModeRepeatAll	KEYWORD2
+musicModeRepeatOne	KEYWORD2
+cardGetCurrentPlayingSongNumber	KEYWORD2
+cardUsbGetSongsCount	KEYWORD2
+usbGetCurrentPlayingSongNumber	KEYWORD2
+fmStartSearch	KEYWORD2
+fmStopSearch	KEYWORD2
+fmGetFreq	KEYWORD2
+fmTunePreset	KEYWORD2
+fmTuneFreq	KEYWORD2
+fmGetFreq2	KEYWORD2
+fmGetPreset	KEYWORD2
+fmGetFreqOfPreset	KEYWORD2
+getAddress	KEYWORD2
+getPinCode	KEYWORD2
+getName	KEYWORD2
+getConnectionSatus	KEYWORD2
+getMusicGetStatus	KEYWORD2
+getHfpStatus	KEYWORD2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
