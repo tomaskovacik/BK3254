@@ -92,17 +92,17 @@ void loop() {
         Serial.println(F("getConnectionStatus    S"));
         Serial.println(F("getMusicStatus         T"));
         Serial.println(F("getHFPStatus           U"));
-        Serial.println(F("changeName             V"));
-        Serial.println(F("voicesOn               X"));
-        Serial.println(F("voicesOff              Y"));
-        Serial.println(F("getVoicesState         Z"));
-        Serial.println(F("goBackOn               W"));
-        Serial.println(F("goBackOff              0"));
-        Serial.println(F("getGoBack              1"));
-        Serial.println(F("callOn                 2"));
-        Serial.println(F("callOff                3"));
-        Serial.println(F("getCall                4"));
-        Serial.println(F("reboot                 5"));
+        Serial.println(F("changeName             V(DNW)"));
+        Serial.println(F("voicesOn               X(DNW)"));
+        Serial.println(F("voicesOff              Y(DNW)"));
+        Serial.println(F("getVoicesState         Z(DNW)"));
+        Serial.println(F("goBackOn               W(DNW)"));
+        Serial.println(F("goBackOff              0(DNW)"));
+        Serial.println(F("getGoBack              1(DNW)"));
+        Serial.println(F("callOn                 2(DNW)"));
+        Serial.println(F("callOff                3(DNW)"));
+        Serial.println(F("getCall                4(DNW)"));
+        Serial.println(F("reboot                 5(DNW)"));
         Serial.println(F("musicGetCurrentMode                 6"));
         break;
       case 'a':

@@ -509,6 +509,8 @@ String BK3254::returnBtModuleName(String receivedString) {
   #define BK3254_CALLOFF "CALLOFF"
   #define BK3254_MCALL "MCALL"
   #define BK3254_REBOOT "REBOOT"
+
+  no one of these command works on my module :/
 */
 
 uint8_t BK3254::voicesOn() {
@@ -563,7 +565,7 @@ uint8_t BK3254::reboot() {
 
 
 
-
+//this command did not work on my module ... 
 uint8_t BK3254::changeName(/*String name*/) {
   BK3254::sendCOMData(BK3254_CHANGE_NAME);
   BK3254::getNextEventFromBT();
