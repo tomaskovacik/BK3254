@@ -21,7 +21,7 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 |BT+CJ\r\n | | To reject a call|
 |BT+CE\r\n | | Hang up the phone|
 |BT+CR\r\n | | Last number redial|
-|COM+PR\r\n | | Music Play / Pause|
+|COM+PP\r\n | | Music Play / Pause|
 |COM+PN\r\n | | next track/ FM next station|
 |COM+PV\r\n | | previous piece/ FM On one|
 |COM+VP\r\n | | Volume Up|
