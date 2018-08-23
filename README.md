@@ -71,7 +71,7 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 
 |Serial command | description|
 |---------------|------------|
-|EEROR\n | error|
+|ERROR\n | error|
 |OK\n | |
 |II\r\n | connection succeeded|
 |IA\r\n | disconnect|
