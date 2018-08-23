@@ -76,7 +76,7 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 |II\r\n | connection succeeded|
 |IA\r\n | disconnect|
 |PLAY_ALL\n | Repeat All Tracks (TF/SDcard Mode)|
-|PLY_ONE\n | Repeat One Track (TF/SDcard Mode)|
+|PLAY_ONE\n | Repeat One Track (TF/SDcard Mode)|
 |VOLx\n | The current volume x level|
 |FM_FQ = 1081\n | Tunner frequency|
 |music_mun = x\n | Song number|
