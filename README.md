@@ -80,7 +80,6 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 |VOLx\n | The current volume x level|
 |FM_FQ = 1081\n | Tunner frequency|
 |music_mun = x\n | Song number|
-|music_mun = x\n | Song number|
 |IRx\n | Received key value by IR|
 |SY_PO\n | Bluetooth turned on|
 |ON\r\n | Bluetooth turned on|
