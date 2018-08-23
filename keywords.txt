@@ -47,23 +47,6 @@ fmGetFreqOfPreset	KEYWORD2
 getAddress	KEYWORD2
 getPinCode	KEYWORD2
 getName	KEYWORD2
-getConnectionSatus	KEYWORD2
-getMusicGetStatus	KEYWORD2
-getHfpStatus	KEYWORD2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+getConnectionStatus	KEYWORD2
+getMusicStatus	KEYWORD2
+getHFPStatus	KEYWORD2
