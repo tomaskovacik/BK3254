@@ -19,7 +19,7 @@
 
 #define USE_SW_SERIAL 1
 
-#define DEBUG 1
+#define DEBUG 0
 
 // UART COMMANDS
 
@@ -34,7 +34,7 @@
 #define BK3254_MCALL "MCALL"
 #define BK3254_REBOOT "REBOOT"
 
-#define BK3254_CHANGE_NAME "SNAME+TEST" //change name
+#define BK3254_CHANGE_NAME "SNAME+" //change name
 #define BK3254_PAIRING "PR" //Pairing   
 #define BK3254_PAIRING_DEVICE "AC" //The last paired device connected (connect to last device?)  
 #define BK3254_DISCONNECT "DC" //Disconect   
@@ -44,9 +44,7 @@
 #define BK3254_CALL_REDIAL "CR" //Last number redial  
 #define BK3254_MUSIC_TOGGLE_PLAY_PAUSE "PP" //Music Play / Pause  
 #define BK3254_MUSIC_NEXT_TRACK "PN" //next track/ FM next station   
-#define BK3254_FM_NEXT_STATION "PN" //next track/ FM next station   
 #define BK3254_MUSIC_PREVIOUS_TRACK "PV" //previous piece/ FM On one   
-#define BK3254_FM_PREVIOUS_STATION "PV" //previous piece/ FM On one   
 #define BK3254_VOLUME_UP "VP" //Volume Up   
 #define BK3254_VOLUME_DOWN "VD" //Volume down   
 #define BK3254_VOLUME_SET "VOL" //VOL+x: 0x00 - 0xAF  Set the volume  correct: VOLx\n / error: ERR\n
@@ -112,28 +110,34 @@ class BK3254
       Off,                 //0x08
       Pairing,             //0x09
       ShutdownInProgress,  //0x0A
-      Bluetooth,           //0x0B
+      BT,                  //0x0B
       AUX,                 //0x0C
       USB,                 //0x0D
-      SDcard,              //0x0E
+      SD,                  //0x0E
       Connecting,          //0x0F
       Busy,                //0x10
       PlayAll,             //0x11
-      PlayOne              //0x12
+      PlayOne,             //0x12
+      FM                  //0x13
     };
 
     uint16_t BTState = Disconnected;
-    uint16_t CallState = Disconnected;
+    uint16_t CallState = Idle;
     uint16_t MusicState = Idle;
     uint16_t PowerState = Off;
-    uint16_t InputSelected = Bluetooth;
+    uint16_t InputSelected = BT;
     uint16_t MusicMode = PlayOne;
-
-    String CallerID;
-    String BT_ADDR;
-    String BT_NAME;
-    String BT_PIN;
-    uint16_t FM_FREQ = 0;
+    uint16_t currentVolume=8;
+    uint16_t NumberOfSongs=0;
+    uint16_t CurrentlyPlayingSong;
+    uint16_t CurrentFrequency = 0;
+    uint8_t CurrentPreset = 0;
+    
+    String CallerID="";
+    String BT_ADDR="";
+    String BT_NAME="";
+    String BT_PIN="";
+    
 
 #if defined(USE_SW_SERIAL)
 #if ARDUINO >= 100
@@ -146,6 +150,7 @@ class BK3254
 #endif
     void begin(uint32_t baudrate = 9600);
     ~BK3254();
+    void end();
     uint8_t sendData(String cmd); //AT+
     uint8_t sendCOMData(String cmd); //COM+
     uint8_t sendFMData(String cmd); //FM+
@@ -188,18 +193,18 @@ class BK3254
     uint8_t fmStartSearch();
     uint8_t fmStopSearch();
     uint8_t fmGetFreq();
-    uint8_t fmTunePreset(uint8_t preset);
-    uint8_t fmTuneFreq(uint16_t freq);
+    uint8_t fmTunePreset(String preset);
+    uint8_t fmTuneFreq(String freq);
     uint8_t fmGetFreq2();
     uint8_t fmGetPreset();
-    uint8_t fmGetFreqOfPreset(uint16_t preset);
+    uint8_t fmGetFreqOfPreset(String preset);
     uint8_t getAddress();
     uint8_t getPinCode();
     uint8_t getName();
     uint8_t getConnectionStatus();
     uint8_t getMusicStatus();
     uint8_t getHFPStatus();
-    uint8_t changeName(/*String name*/);
+    uint8_t changeName(String newName);
     //??
     // from F-6888_BK3254_product_information.zh_CN.rtf
 
@@ -218,11 +223,13 @@ class BK3254
   private:
     uint8_t _reset;
     uint8_t decodeReceivedString(String receivedString);
+    uint8_t decodeReceivedStringOld(String receivedString);
     void DBG(String text);
     void resetHigh();
     void resetLow();
     String returnCallerID(String receivedString);
     String returnBtModuleName(String receivedString);
+    uint16_t returnFreq(String receivedString);
 
 #if  defined(USE_SW_SERIAL)
 #if ARDUINO >= 100
