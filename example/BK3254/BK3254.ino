@@ -10,12 +10,16 @@
 #include "BK3254.h"
 #include <SoftwareSerial.h>
 
+
 uint16_t BTState;
 uint16_t CallState;
 uint16_t MusicState;
 uint16_t PowerState;
 uint16_t InputSelected;
 uint16_t MusicMode;
+uint16_t CurrentFrequency;
+uint8_t CurrentPreset;
+uint16_t currentVolume;
 
 SoftwareSerial swSerial(7, 6); //rxPin, txPin, inverse_logic
 
@@ -23,10 +27,15 @@ BK3254 BT(&swSerial, 5);
 
 void getInitStates() {
   BT.getName();
+  delay(100);
   BT.getConnectionStatus();
+  delay(100);
   BT.getPinCode();
+  delay(100);
   BT.getAddress();
+  delay(100);
   BT.getMusicStatus();
+  delay(100);
   BT.getHFPStatus();
 }
 
@@ -34,9 +43,17 @@ void setup() {
   BT.begin();
   Serial.begin(115200);
   Serial.println(F("press h for help"));
+  delay(1000);
   getInitStates();
 }
 
+void printInputSelected();
+void printMusicState();
+void printBTstate();
+void printCallState();
+void printMusicState();
+void printMusicMode();
+void printAllInfo();
 
 void loop() {
 
@@ -57,53 +74,55 @@ void loop() {
         Serial.println(F("callRedial             i"));
         Serial.println(F("musicTogglePlayPause   j"));
         Serial.println(F("musicNextTrack         k"));
-        Serial.println(F("fmNextTrack            l"));
-        Serial.println(F("musicPreviousTrack     m"));
-        Serial.println(F("fmPreviousTrack        n"));
-        Serial.println(F("volumeUp               o"));
-        Serial.println(F("volumeDown             p"));
-        Serial.println(F("volumeSet              q"));
-        Serial.println(F("volumeGet              r"));
-        Serial.println(F("shutdown               s"));
-        Serial.println(F("standby                t"));
-        Serial.println(F("powerup                u"));
-        Serial.println(F("switchInput            v"));
-        Serial.println(F("switchInputToBluetooth x"));
-        Serial.println(F("switchInputToCard      y"));
-        Serial.println(F("switchInputToAux       z"));
-        Serial.println(F("switchInputToFm        w"));
-        Serial.println(F("switchInputToUsb       A"));
-        Serial.println(F("musicModeRepeatAll     B"));
-        Serial.println(F("musicModeRepeatOne     C"));
-        Serial.println(F("cardGetCurrentPlayingSongNumber D"));
-        Serial.println(F("cardUsbGetSongsCount   E"));
-        Serial.println(F("usbGetCurrentPlayingSongNumber F"));
-        Serial.println(F("fmStartSearch          G"));
-        Serial.println(F("fmStopSearch           H"));
-        Serial.println(F("fmGetFreq              I"));
-        Serial.println(F("fmTunePreset           J"));
-        Serial.println(F("fmTuneFreq             K"));
-        Serial.println(F("fmGetFreq2             L"));
-        Serial.println(F("fmGetPreset            M"));
-        Serial.println(F("fmGetFreqOfPreset      N"));
-        Serial.println(F("getAddress             O"));
-        Serial.println(F("getPinCode             P"));
-        Serial.println(F("getName                R"));
-        Serial.println(F("getConnectionStatus    S"));
-        Serial.println(F("getMusicStatus         T"));
-        Serial.println(F("getHFPStatus           U"));
-        Serial.println(F("changeName             V(DNW)"));
-        Serial.println(F("voicesOn               X(DNW)"));
-        Serial.println(F("voicesOff              Y(DNW)"));
-        Serial.println(F("getVoicesState         Z(DNW)"));
-        Serial.println(F("goBackOn               W(DNW)"));
-        Serial.println(F("goBackOff              0(DNW)"));
-        Serial.println(F("getGoBack              1(DNW)"));
-        Serial.println(F("callOn                 2(DNW)"));
-        Serial.println(F("callOff                3(DNW)"));
-        Serial.println(F("getCall                4(DNW)"));
-        Serial.println(F("reboot                 5(DNW)"));
-        Serial.println(F("musicGetCurrentMode                 6"));
+        Serial.println(F("musicPreviousTrack     l"));
+        Serial.println(F("volumeUp               m"));
+        Serial.println(F("volumeDown             n"));
+        Serial.println(F("volumeSet              o"));
+        Serial.println(F("volumeGet              p"));
+        Serial.println(F("shutdown               q"));
+        Serial.println(F("standby                r"));
+        Serial.println(F("powerup                s"));
+        Serial.println(F("switchInput            t"));
+        Serial.println(F("switchInputToBluetooth u"));
+        Serial.println(F("switchInputToCard      v"));
+        Serial.println(F("switchInputToAux       x"));
+        Serial.println(F("switchInputToFm        y"));
+        Serial.println(F("switchInputToUsb       z"));
+        Serial.println(F("musicModeRepeatAll     w"));
+        Serial.println(F("musicModeRepeatOne     A"));
+        Serial.println(F("musicGetCurrentMode    B"));
+        Serial.println(F("cardGetCurrentPlayingSongNumber C"));
+        Serial.println(F("cardUsbGetSongsCount   D"));
+        Serial.println(F("usbGetCurrentPlayingSongNumber E"));
+        Serial.println(F("fmStartSearch          F"));
+        Serial.println(F("fmStopSearch           G"));
+        Serial.println(F("fmGetFreq              H"));
+        Serial.println(F("fmTunePreset X=preset         IX"));
+        Serial.println(F("fmTuneFreq  (XXXX=freq)    JXXXX"));
+        Serial.println(F("fmGetFreq2             K"));
+        Serial.println(F("fmGetPreset            L"));
+        Serial.println(F("fmGetFreqOfPreset  X=preset    MX"));
+        Serial.println(F("getAddress             N"));
+        Serial.println(F("getPinCode             O"));
+        Serial.println(F("getName                P"));
+        Serial.println(F("getConnectionStatus    Q"));
+        Serial.println(F("getMusicStatus         R"));
+        Serial.println(F("getHFPStatus           S"));
+        Serial.println(F("changeName             T(DNW)"));
+        Serial.println(F("voicesOn               U(DNW)"));
+        Serial.println(F("voicesOff              V(DNW)"));
+        Serial.println(F("getVoicesState         X(DNW)"));
+        Serial.println(F("goBackOn               Y(DNW)"));
+        Serial.println(F("goBackOff              Z(DNW)"));
+        Serial.println(F("getGoBack              W(DNW)"));
+        Serial.println(F("callOn                 0(DNW)"));
+        Serial.println(F("callOff                1(DNW)"));
+        Serial.println(F("getCall                2(DNW)"));
+        Serial.println(F("reboot                 3(DNW)"));
+        Serial.println(F("print all info         4"));
+        Serial.println();
+        printAllInfo();
+
         break;
       case 'a':
         BT.resetModule();
@@ -136,145 +155,178 @@ void loop() {
         BT.musicNextTrack();
         break;
       case 'l':
-        BT.fmNextTrack();
-        break;
-      case 'm':
         BT.musicPreviousTrack();
         break;
-      case 'n':
-        BT.fmPreviousTrack();
-        break;
-      case 'o':
+      case 'm':
         BT.volumeUp();
         break;
-      case 'p':
+      case 'n':
         BT.volumeDown();
         break;
-      case 'q':
+      case 'o':
         //  BT.volumeSet();
         break;
-      case 'r':
+      case 'p':
         BT.volumeGet();
         break;
-      case 's':
+      case 'q':
         BT.shutdown();
         break;
-      case 't':
+      case 'r':
         BT.standby();
         break;
-      case 'u':
+      case 's':
         BT.powerup();
         break;
-      case 'v':
+      case 't':
         BT.switchInput();
         break;
-      case 'x':
+      case 'u':
         BT.switchInputToBluetooth();
         break;
-      case 'y':
+      case 'v':
         BT.switchInputToCard();
         break;
-      case 'z':
+      case 'x':
         BT.switchInputToAux();
         break;
-      case 'w':
+      case 'y':
         BT.switchInputToFm();
         break;
-      case 'A':
+      case 'z':
         BT.switchInputToUsb();
         break;
-      case 'B':
+      case 'w':
         BT.musicModeRepeatAll();
         break;
-      case 'C':
+      case 'A':
         BT.musicModeRepeatOne();
         break;
-      case 'D':
+      case 'B':
+        BT.musicGetCurrentMode();
+        break;
+      case 'C':
         BT.cardGetCurrentPlayingSongNumber();
         break;
-      case 'E':
+      case 'D':
         BT.cardUsbGetSongsCount();
         break;
-      case 'F':
+      case 'E':
         BT.usbGetCurrentPlayingSongNumber();
         break;
-      case 'G':
+      case 'F':
         BT.fmStartSearch();
         break;
-      case 'H':
+      case 'G':
         BT.fmStopSearch();
         break;
-      case 'I':
+      case 'H':
         BT.fmGetFreq();
         break;
+      case 'I':
+        {
+          delay(100);
+          String str;
+          c = 0;
+          while (Serial.available() > 0) {
+            c = Serial.read();
+            str += c;
+          }
+          BT.fmTunePreset(str);
+        }
+        break;
       case 'J':
-        // BT.fmTunePreset();
+        {
+          delay(100);
+          String str;
+          c = 0;
+          while (Serial.available() > 0) {
+            c = Serial.read();
+            str += c;
+          }
+          BT.fmTuneFreq(str);
+        }
         break;
       case 'K':
-        // BT.fmTuneFreq();
-        break;
-      case 'L':
         BT.fmGetFreq2();
         break;
-      case 'M':
+      case 'L':
         BT.fmGetPreset();
         break;
-      case 'N':
-        //  BT.fmGetFreqOfPreset();
+      case 'M':
+        {
+          delay(100);
+          String str;
+          c = 0;
+          while (Serial.available() > 0) {
+            c = Serial.read();
+            str += c;
+          }
+          BT.fmGetFreqOfPreset(str);
+        }
         break;
-      case 'O':
+      case 'N':
         BT.getAddress();
         break;
-      case 'P':
+      case 'O':
         BT.getPinCode();
         break;
-      case 'R':
+      case 'P':
         BT.getName();
         break;
-      case 'S':
+      case 'Q':
         BT.getConnectionStatus();
         break;
-      case 'T':
+      case 'R':
         BT.getMusicStatus();
         break;
-      case 'U':
+      case 'S':
         BT.getHFPStatus();
         break;
-      case 'V':
-        BT.changeName();
+      case 'T':
+        {
+          delay(100);
+          String str;
+          c = 0;
+          while (Serial.available() > 0) {
+            c = Serial.read();
+            str += c;
+          }
+          BT.changeName(str);
+        }
         break;
-      case 'X':
+      case 'U':
         BT.voicesOn();
         break;
-      case 'Y':
+      case 'V':
         BT.voicesOff();
         break;
-      case 'Z':
+      case 'X':
         BT.getVoicesState();
         break;
-      case 'W':
+      case 'Y':
         BT.goBackOn();
         break;
-      case '0':
+      case 'Z':
         BT.goBackOff();
         break;
-      case '1':
+      case 'W':
         BT.getGoBack();
         break;
-      case '2':
+      case '0':
         BT.callOn();
         break;
-      case '3':
+      case '1':
         BT.callOff();
         break;
-      case '4':
+      case '2':
         BT.getCall();
         break;
-      case '5':
+      case '3':
         BT.reboot();
         break;
-      case '6':
-        BT.musicGetCurrentMode();
+      case '4':
+        printAllInfo();
         break;
     }
   }
@@ -282,77 +334,151 @@ void loop() {
   BT.getNextEventFromBT();
 
   if (BTState != BT.BTState) {
-    switch (BT.BTState) {
-      case BT.Connected:
-        Serial.println(F("Bluetooth connected"));
-        break;
-      case BT.Disconnected:
-        Serial.println(F("Bluetooth disconnected"));
-        break;
-      case BT.Pairing:
-        Serial.println(F("Bluetooth in pairing mode"));
-        break;
-    }
+    printBTstate();
     BTState = BT.BTState;
   }
 
   if (CallState != BT.CallState) {
-    switch (BT.CallState) {
-      case (BT.IncomingCall):
-        Serial.println(F("Incoming call: "));
-        Serial.println(BT.CallerID);
-        break;
-      case (BT.OutgoingCall):
-        Serial.println(F("Dialing: "));
-        Serial.println(BT.CallerID);
-        break;
-      case (BT.CallInProgress):
-        Serial.println(F("Calling: "));
-        Serial.println(BT.CallerID);
-        break;
-    }
+    printCallState();
     CallState = BT.CallState;
   }
 
   if (MusicState != BT.MusicState) {
-    switch (BT.MusicState) {
-      case (BT.Playing):
-        Serial.println(F("Playing music"));
-        break;
-      case (BT.Idle):
-        Serial.println(F("Music stoped"));
-        break;
-    }
+    printMusicState();
     MusicState = BT.MusicState;
   }
 
   if (InputSelected != BT.InputSelected) {
-    switch (BT.InputSelected) {
-      case (BT.AUX):
-        Serial.println(F("AUX selected"));
-
-        break;
-      case (BT.SDcard):
-        Serial.println(F("SDCard selected"));
-        break;
-      case (BT.Bluetooth):
-        Serial.println(F("BT selected"));
-        break;
-      case (BT.USB):
-        Serial.println(F("USB selected"));
-        break;
-    }
+    printInputSelected();
     InputSelected = BT.InputSelected;
   }
+
   if (MusicMode != BT.MusicMode) {
-    switch (BT.MusicMode) {
-      case (BT.PlayAll):
-        Serial.println(F("Music play all"));
-        break;
-      case (BT.PlayOne):
-        Serial.println(F("Music play one"));
-        break;
-    }
+    printMusicMode();
     MusicMode = BT.MusicMode;
   }
+
+  if (CurrentFrequency != BT.CurrentFrequency) {
+    printCurrentFreqency();
+    CurrentFrequency = BT.CurrentFrequency;
+  }
+
+  if (CurrentPreset != BT.CurrentPreset) {
+    printCurrentPreset();
+    CurrentPreset = BT.CurrentPreset;
+  }
+
+  if (currentVolume != BT.currentVolume) {
+    printCurrentVolume();
+    currentVolume = BT.currentVolume;
+  }
+  
 }
+
+void printAllInfo() {
+  printInputSelected();
+  printMusicState();
+  printBTstate();
+  printCallState();
+  printCurrentFreqency();
+  printCurrentPreset();
+  printCurrentVolume();
+}
+
+void printCurrentVolume() {
+    Serial.print(F("Current volume level: "));
+    Serial.println(BT.currentVolume);
+}
+
+void printCurrentFreqency() {
+    Serial.print(F("Tunner frequency: "));
+    Serial.print(BT.CurrentFrequency);
+    Serial.println("MHz");
+}
+
+void printCurrentPreset() {
+    Serial.print(F("Current preset: "));
+    Serial.println(BT.CurrentPreset);
+}
+
+void printMusicMode() {
+  switch (BT.MusicMode) {
+    case (BT.PlayAll):
+      Serial.println(F("Music play all"));
+      break;
+    case (BT.PlayOne):
+      Serial.println(F("Music play one"));
+      break;
+  }
+}
+
+void printBTstate() {
+  switch (BT.BTState) {
+    case BT.Connected:
+      Serial.println(F("Bluetooth connected"));
+      break;
+    case BT.Disconnected:
+      Serial.println(F("Bluetooth disconnected"));
+      break;
+    case BT.Pairing:
+      Serial.println(F("Bluetooth in pairing mode"));
+      break;
+  }
+}
+
+void printCallState() {
+  switch (BT.CallState) {
+    case (BT.IncomingCall):
+      Serial.println(F("Incoming call: "));
+      Serial.println(BT.CallerID);
+      break;
+    case (BT.OutgoingCall):
+      Serial.println(F("Dialing: "));
+      Serial.println(BT.CallerID);
+      break;
+    case (BT.CallInProgress):
+      Serial.println(F("Calling: "));
+      Serial.println(BT.CallerID);
+      break;
+  }
+}
+
+void printMusicState() {
+  BT.getCurrentInput();
+  switch (BT.MusicState) {
+    case (BT.Playing):
+      //Serial.println(F("Playing music"));
+      if (BT.InputSelected == BT.SD || BT.InputSelected == BT.USB) {
+        BT.cardUsbGetSongsCount(); //get number of song on card or USB and currently played song:
+        if (BT.InputSelected == BT.SD) BT.cardGetCurrentPlayingSongNumber();
+        if (BT.InputSelected == BT.USB) BT.usbGetCurrentPlayingSongNumber();
+        Serial.print("Playing song "); Serial.print(BT.CurrentlyPlayingSong); Serial.print(" of "); Serial.print(BT.NumberOfSongs); Serial.println(".");
+      }
+      break;
+    case (BT.Idle):
+      Serial.println(F("Music stoped"));
+      break;
+  }
+}
+
+void printInputSelected() {
+  switch (BT.InputSelected) {
+    case (BT.AUX):
+      Serial.println(F("AUX selected"));
+      break;
+    case (BT.SD):
+      Serial.println(F("SD/TF Card selected"));
+      break;
+    case (BT.BT):
+      Serial.println(F("BlueTooth selected"));
+      break;
+    case (BT.USB):
+      Serial.println(F("USB selected"));
+      break;
+    case (BT.FM):
+      Serial.println(F("FM selected"));
+      void printFMFreq();
+      break;
+  }
+}
+
