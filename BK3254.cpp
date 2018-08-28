@@ -33,17 +33,13 @@ BK3254::BK3254(HardwareSerial *ser, uint8_t resetPin)
    Destructor
 */
 BK3254::~BK3254() {
-  BK3254::end();
+  btSerial->end();
 }
 
 void BK3254::begin(uint32_t baudrate) {
   btSerial->begin(baudrate);
   pinMode(_reset, OUTPUT);
   BK3254::resetHigh();
-}
-
-void BK3254::end() {
-  btSerial->end();
 }
 
 void BK3254::resetLow() {
@@ -76,16 +72,17 @@ uint8_t BK3254::getNextEventFromBT() {
     if (c == '\n') {
       if (receivedString == "") { //nothing before enter was received
         //DBG("received only empty string\n running again myself...\n");
-        BK3254::getNextEventFromBT();
+        return BK3254::getNextEventFromBT();
       }
       receivedString = receivedString + c;
       //      Serial.println(c,HEX);
-      decodeReceivedString(receivedString);
+      return decodeReceivedString(receivedString);
       break;
     }
     //append received buffer with received character
     receivedString = receivedString + c;  // cose += c did not work ...
   }
+  return 0;
 }
 
 uint8_t BK3254::sendData(String cmd) {
@@ -279,7 +276,6 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     DBG("Song number currently playing: " + (char)CurrentlyPlayingSong); DBG("\n");
   } else if (memcmp(&receivedString[0], "OK", 2) == 0) {
     //DBG("OK");
-    return 1;
   } else if (memcmp(&receivedString[0], "ON", 2) == 0) {
     //DBG("Bluetooth turned on\n");
     PowerState = On;
@@ -370,6 +366,9 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
   } else if (memcmp(&receivedString[0], "M4", 2) == 0) {
     //DBG("Calling");
     BTState = IncomingCall;
+  } else if (memcmp(&receivedString[0], "MFM", 3) == 0) {
+   // DBG("Current preset: ");
+    CurrentPreset = receivedString.substring(3).toInt();
   }
   return 1;
 }
@@ -553,9 +552,9 @@ uint8_t BK3254::volumeDown() { //BK3254_VOLUME_DOWN "COM+VD" //Volume down
   return BK3254::getNextEventFromBT();
 }
 
-uint8_t BK3254::volumeSet(uint8_t volume) { //BK3254_VOLUME_SET "COM+VOL" //VOL+x: 0x00 - 0xAF  Set the volume  correct: VOLx\n / error: ERR\n
+uint8_t BK3254::volumeSet(String volume) { //BK3254_VOLUME_SET "COM+VOL" //VOL+x: 0x00 - 0xAF  Set the volume  correct: VOLx\n / error: ERR\n
   BK3254::getNextEventFromBT();
-  BK3254::sendCOMData(BK3254_VOLUME_SET + (char)volume);
+  BK3254::sendCOMData(BK3254_VOLUME_SET + volume);
   return BK3254::getNextEventFromBT();
 }
 

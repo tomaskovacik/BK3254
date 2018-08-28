@@ -3,7 +3,7 @@
         (C) Tomas Kovacik [nail at nodomain dot sk]
         https://github.com/tomaskovacik/
 
-        example for F-6188 module library
+        example for library for A2DP bluetooth modules based on BEKEN corp chip BK3254
 */
 
 
@@ -20,23 +20,21 @@ uint16_t MusicMode;
 uint16_t CurrentFrequency;
 uint8_t CurrentPreset;
 uint16_t currentVolume;
+String CallerID = "";
 
 SoftwareSerial swSerial(7, 6); //rxPin, txPin, inverse_logic
 
 BK3254 BT(&swSerial, 5);
 
+#define INITVOLUME "1"
+
 void getInitStates() {
-  BT.getName();
-  delay(100);
-  BT.getConnectionStatus();
-  delay(100);
-  BT.getPinCode();
-  delay(100);
-  BT.getAddress();
-  delay(100);
-  BT.getMusicStatus();
-  delay(100);
-  BT.getHFPStatus();
+  while (BT.getName() != 1);
+  while (BT.getConnectionStatus() != 1);
+  while (BT.getPinCode() != 1);
+  while (BT.getAddress() != 1);
+  while (BT.getMusicStatus() != 1);
+  while (BT.getHFPStatus() != 1);
 }
 
 void setup() {
@@ -45,15 +43,19 @@ void setup() {
   Serial.println(F("press h for help"));
   delay(1000);
   getInitStates();
+  delay(100);
+  while (BT.volumeSet(INITVOLUME) != 1);
 }
 
 void printInputSelected();
 void printMusicState();
 void printBTstate();
-void printCallState();
 void printMusicState();
+void printPowerState();
 void printMusicMode();
 void printAllInfo();
+void printCurrentMusicMode();
+void printCallState();
 
 void loop() {
 
@@ -164,7 +166,16 @@ void loop() {
         BT.volumeDown();
         break;
       case 'o':
-        //  BT.volumeSet();
+        {
+          delay(100);
+          String str;
+          c = 0;
+          while (Serial.available() > 0) {
+            c = Serial.read();
+            str += c;
+          }
+          BT.volumeSet(str);
+        }
         break;
       case 'p':
         BT.volumeGet();
@@ -348,6 +359,11 @@ void loop() {
     MusicState = BT.MusicState;
   }
 
+  if (PowerState != BT.PowerState) {
+    printPowerState();
+    PowerState = BT.PowerState;
+  }
+
   if (InputSelected != BT.InputSelected) {
     printInputSelected();
     InputSelected = BT.InputSelected;
@@ -372,10 +388,12 @@ void loop() {
     printCurrentVolume();
     currentVolume = BT.currentVolume;
   }
-  
 }
 
 void printAllInfo() {
+  Serial.println(BT.BT_NAME);
+  Serial.print("Pin: "); Serial.println(BT.BT_PIN);
+  Serial.print("BT address: "); Serial.println(BT.BT_ADDR);
   printInputSelected();
   printMusicState();
   printBTstate();
@@ -383,22 +401,47 @@ void printAllInfo() {
   printCurrentFreqency();
   printCurrentPreset();
   printCurrentVolume();
+  printCurrentMusicMode();
+}
+
+void printCallState() {
+  switch (CallState) {
+    case BT.IncomingCall:
+      Serial.print("Incomming call: ");
+      break;
+    case BT.OutgoingCall:
+      Serial.print("Outgoing call: ");
+      break;
+    case BT.CallInProgress:
+      Serial.print("Calling: ");
+      break;
+    case BT.Idle:
+      Serial.print("Call ended.");
+      break;
+  }
+  if (CallState != BT.Idle)
+    Serial.println(BT.CallerID);
+}
+
+void printCurrentMusicMode() {
+  Serial.print(F("Current mode: "));
+  Serial.println(BT.MusicMode);
 }
 
 void printCurrentVolume() {
-    Serial.print(F("Current volume level: "));
-    Serial.println(BT.currentVolume);
+  Serial.print(F("Current volume level: "));
+  Serial.println(BT.currentVolume);
 }
 
 void printCurrentFreqency() {
-    Serial.print(F("Tunner frequency: "));
-    Serial.print(BT.CurrentFrequency);
-    Serial.println("MHz");
+  Serial.print(F("Tunner frequency: "));
+  Serial.print(BT.CurrentFrequency);
+  Serial.println("MHz");
 }
 
 void printCurrentPreset() {
-    Serial.print(F("Current preset: "));
-    Serial.println(BT.CurrentPreset);
+  Serial.print(F("Current preset: "));
+  Serial.println(BT.CurrentPreset);
 }
 
 void printMusicMode() {
@@ -422,23 +465,6 @@ void printBTstate() {
       break;
     case BT.Pairing:
       Serial.println(F("Bluetooth in pairing mode"));
-      break;
-  }
-}
-
-void printCallState() {
-  switch (BT.CallState) {
-    case (BT.IncomingCall):
-      Serial.println(F("Incoming call: "));
-      Serial.println(BT.CallerID);
-      break;
-    case (BT.OutgoingCall):
-      Serial.println(F("Dialing: "));
-      Serial.println(BT.CallerID);
-      break;
-    case (BT.CallInProgress):
-      Serial.println(F("Calling: "));
-      Serial.println(BT.CallerID);
       break;
   }
 }
@@ -478,6 +504,17 @@ void printInputSelected() {
     case (BT.FM):
       Serial.println(F("FM selected"));
       void printFMFreq();
+      break;
+  }
+}
+
+void printPowerState() {
+  switch (PowerState) {
+    case BT.On:
+      Serial.println("Module On");
+      break;
+    case BT.Off:
+      Serial.println("Module Off");
       break;
   }
 }

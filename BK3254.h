@@ -19,7 +19,7 @@
 
 #define USE_SW_SERIAL 1
 
-#define DEBUG 0
+#define DEBUG 1
 
 // UART COMMANDS
 
@@ -118,7 +118,7 @@ class BK3254
       Busy,                //0x10
       PlayAll,             //0x11
       PlayOne,             //0x12
-      FM                  //0x13
+      FM                   //0x13
     };
 
     uint16_t BTState = Disconnected;
@@ -150,7 +150,6 @@ class BK3254
 #endif
     void begin(uint32_t baudrate = 9600);
     ~BK3254();
-    void end();
     uint8_t sendData(String cmd); //AT+
     uint8_t sendCOMData(String cmd); //COM+
     uint8_t sendFMData(String cmd); //FM+
@@ -171,7 +170,7 @@ class BK3254
     uint8_t fmPreviousTrack();
     uint8_t volumeUp();
     uint8_t volumeDown();
-    uint8_t volumeSet(uint8_t volume);
+    uint8_t volumeSet(String volume);
     uint8_t volumeGet();
     uint8_t shutdown();
     uint8_t standby();

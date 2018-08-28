@@ -31,8 +31,11 @@ switchInputToCard	KEYWORD2
 switchInputToAux	KEYWORD2
 switchInputToFm	KEYWORD2
 switchInputToUsb	KEYWORD2
+getCurrentInput	KEYWORD2
 musicModeRepeatAll	KEYWORD2
 musicModeRepeatOne	KEYWORD2
+musicGetCurrentMode	KEYWORD2
+musicPlaySong	KEYWORD2
 cardGetCurrentPlayingSongNumber	KEYWORD2
 cardUsbGetSongsCount	KEYWORD2
 usbGetCurrentPlayingSongNumber	KEYWORD2
@@ -50,6 +53,17 @@ getName	KEYWORD2
 getConnectionStatus	KEYWORD2
 getMusicStatus	KEYWORD2
 getHFPStatus	KEYWORD2
+changeName	KEYWORD2
+voicesOn	KEYWORD2
+voicesOff	KEYWORD2
+getVoicesState	KEYWORD2
+goBackOn	KEYWORD2
+goBackOff	KEYWORD2
+getGoBack	KEYWORD2
+callOn	KEYWORD2
+callOff	KEYWORD2
+getCall	KEYWORD2
+reboot	KEYWORD2
 
 Playing	LITERAL1
 Idle	LITERAL1
