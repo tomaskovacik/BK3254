@@ -99,11 +99,11 @@ void loop() {
         Serial.println(F("fmStartSearch          F"));
         Serial.println(F("fmStopSearch           G"));
         Serial.println(F("fmGetFreq              H"));
-        Serial.println(F("fmTunePreset X=preset         IX"));
-        Serial.println(F("fmTuneFreq  (XXXX=freq)    JXXXX"));
+        Serial.println(F("fmTunePreset XX=01-99        IX"));
+        Serial.println(F("fmTuneFreq  (XXXX=0981-1080    JXXXX"));
         Serial.println(F("fmGetFreq2             K"));
         Serial.println(F("fmGetPreset            L"));
-        Serial.println(F("fmGetFreqOfPreset  X=preset    MX"));
+        Serial.println(F("fmGetFreqOfPreset  XX=01-99    MX"));
         Serial.println(F("getAddress             N"));
         Serial.println(F("getPinCode             O"));
         Serial.println(F("getName                P"));

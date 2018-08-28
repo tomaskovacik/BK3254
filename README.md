@@ -49,8 +49,8 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 |FM+ST\r\n | | FM Stop station search|
 |FM+GF\r\n | | Get the current radio frequency | FM_FQ = 875 ~ 1081|
 |COM+SFMXX\r\n | | Select FM preset 01-99 | correct: FM_FQ = 998\n / error: ERR\n|
-|COM+SETFMXXX\r\n | XXX : 875 to 1081 | set up FM frequency to XXX | correct: OK\n / error: ERR\n|
-|COM+MRFM\r\n | | Query current FM frequency (FM Mode) | correct: FM_FQ = xxx\n. xxx: 875-1081(87.5-108.1Mhz) / error: ERR\n|
+|COM+SETFMXXXX\r\n | XXX : 875 to 1081 | set up FM frequency to XXXX (0875-1080) | correct: OK\n / error: ERR\n|
+|COM+MRFM\r\n | | Query current FM frequency (FM Mode) | correct: FM_FQ = xxx\n. xxx: 0875-1081(87.5-108.1Mhz) / error: ERR\n|
 |COM+MMFM\r\n | | Query currently selected preset (FM Mode) | correct: MFMxx \ n,xx: 01-99 / error: ERR\n|
 |COM+MFFMXX\r\n | | Inquire FM of xx No. A frequency corresponding to (FM Mode) | correct: FM_FQ = xxx\n, error: ERR\n|
 

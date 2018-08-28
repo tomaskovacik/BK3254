@@ -73,7 +73,7 @@
 #define BK3254_FM_TUNE_FREQ "SETFM" //SETFM+XXX, XXX : 875 to 1081   set up FM frequency to XXX  correct: OK\n / error: ERR\n
 #define BK3254_FM_GET_FREQ2 "MRFM" //Query current FM frequency (FM Mode)  correct: FM_FQ = xxx\n. xxx: 875-1081(87.5-108.1Mhz) / error: ERR\n ?? wht is diference to FM+GF ?
 #define BK3254_FM_GET_PRESET "MMFM" //Query currently selected preset (FM Mode)   correct: MFMxx \ n,xx: 01-99 / error: ERR\n
-#define BK3254_FM_GET_FREQ_OF_PRESET "MFM" //MFFM+XX, Inquire FM of xx No. A frequency corresponding to (FM Mode)   correct: FM_FQ = xxx\n, error: ERR\n
+#define BK3254_FM_GET_FREQ_OF_PRESET "MFFM" //MFFM+XX, Inquire FM of xx No. A frequency corresponding to (FM Mode)   correct: FM_FQ = xxx\n, error: ERR\n
 
 //Query / feedback commands
 
