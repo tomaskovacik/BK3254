@@ -1,8 +1,17 @@
+# IMPORTANT NOTE
+
+Do not buy version 1.2, it probably did not support all features:
+
+<img src="https://raw.githubusercontent.com/tomaskovacik/BK3254/master/bk3254_only_BT.png">
+(screenshot cutout of aliexpress)
+
+
 # Library for BK3254 based bluetooth audio module (F-6888)
 
 Supported commands based on this datasheet translate by www.onlinedoctranslator.com:
 
 https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/BK3254_V1.2_HYT.zh-CN.en.pdf
+
 
 
 ## HOW TO INSTALL
