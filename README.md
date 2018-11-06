@@ -1,9 +1,8 @@
 # IMPORTANT NOTE
 
-Do not buy version 1.2, it probably did not support all features:
+take care what module you buy, where are version which did not have support for all features,read description of what you buy, for example here from aliexpress:
 
 <img src="https://raw.githubusercontent.com/tomaskovacik/BK3254/master/bk3254_only_BT.png">
-(screenshot cutout of aliexpress)
 
 
 # Library for BK3254 based bluetooth audio module (F-6888)
