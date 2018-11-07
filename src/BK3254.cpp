@@ -403,6 +403,8 @@ uint16_t BK3254::returnFreq(String receivedString) {
   #define BK3254_REBOOT "REBOOT"
 
   no one of these command works on my module :/
+  but I have V1.1 and pdf is for V1.2
+  SPIN sould works only on V1.3 based on pdf name ... 
 */
 
 uint8_t BK3254::voicesOn() {
@@ -464,6 +466,22 @@ uint8_t BK3254::reboot() {
   BK3254::sendCOMData(BK3254_REBOOT);
   return BK3254::getNextEventFromBT();
 }
+
+/*
+
+*/
+uint8_t BK3254::changePin(String newPin) {//this command did not work on my module ...
+  BK3254::getNextEventFromBT();
+  if (newPin.length() - 2 > 16) { //count for termination char
+    DBG("Pin to long, max 16chars");
+    return false;
+  } else {
+    DBG("Writing pin\n");
+    BK3254::sendCOMData(BK3254_SPIN + newPin);
+  }
+  return BK3254::getNextEventFromBT();
+}
+
 /*
 
 */

@@ -110,18 +110,19 @@ void loop() {
         Serial.println(F("getConnectionStatus    Q"));
         Serial.println(F("getMusicStatus         R"));
         Serial.println(F("getHFPStatus           S"));
-        Serial.println(F("changeName             T(DNW)"));
-        Serial.println(F("voicesOn               U(DNW)"));
-        Serial.println(F("voicesOff              V(DNW)"));
-        Serial.println(F("getVoicesState         X(DNW)"));
-        Serial.println(F("goBackOn               Y(DNW)"));
-        Serial.println(F("goBackOff              Z(DNW)"));
-        Serial.println(F("getGoBack              W(DNW)"));
-        Serial.println(F("callOn                 0(DNW)"));
-        Serial.println(F("callOff                1(DNW)"));
-        Serial.println(F("getCall                2(DNW)"));
-        Serial.println(F("reboot                 3(DNW)"));
+        Serial.println(F("changeName             T"));
+        Serial.println(F("voicesOn               U"));
+        Serial.println(F("voicesOff              V"));
+        Serial.println(F("getVoicesState         X"));
+        Serial.println(F("goBackOn               Y"));
+        Serial.println(F("goBackOff              Z"));
+        Serial.println(F("getGoBack              W"));
+        Serial.println(F("callOn                 0"));
+        Serial.println(F("callOff                1"));
+        Serial.println(F("getCall                2"));
+        Serial.println(F("reboot                 3"));
         Serial.println(F("print all info         4"));
+        Serial.println(F("change pin             5"));
         Serial.println();
         printAllInfo();
 
@@ -338,6 +339,18 @@ void loop() {
         break;
       case '4':
         printAllInfo();
+        break;
+      case '5':
+        {
+          delay(100);
+          String str;
+          c = 0;
+          while (Serial.available() > 0) {
+            c = Serial.read();
+            str += c;
+          }
+          BT.changePin(str);
+        }
         break;
     }
   }
