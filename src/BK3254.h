@@ -22,7 +22,7 @@
 #define DEBUG 1
 
 // UART COMMANDS
-//probably works only on v1.2
+// works only on v1.2
 #define BK3254_CHANGE_NAME "SNAME+" //change name
 #define BK3254_VOICES_ON "TONEON"
 #define BK3254_VOICES_OFF "TONEOFF"
@@ -35,9 +35,10 @@
 #define BK3254_MCALL "MCALL"
 #define BK3254_REBOOT "REBOOT"
 //probably work only with V1.3 based on this: https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/BK3254_V1.3_HYT.zh-CN.en.pdf
+// on 1.2 firmware this only disconnect BT
 #define BK3254_SPIN "SPIN+"
 
-//works with v1.1 for shure:
+//works with v1.1 for sure:
 #define BK3254_PAIRING "PR" //Pairing   
 #define BK3254_PAIRING_DEVICE "AC" //The last paired device connected (connect to last device?)  
 #define BK3254_DISCONNECT "DC" //Disconect   

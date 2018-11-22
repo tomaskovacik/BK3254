@@ -11,6 +11,9 @@ Supported commands based on this datasheet translate by www.onlinedoctranslator.
 
 https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/BK3254_V1.2_HYT.zh-CN.en.pdf
 
+and this:
+
+https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/BK3254_V1.3_HYT.zh-CN.en.pdf
 
 
 ## HOW TO INSTALL
@@ -21,7 +24,6 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 
 |Serial command |Parameter Description | Instruction Description Function | Responce|
 |---------------|----------------------|----------------------------------|---------|
-|COM+SNAME+XXX\r\n |XXX: New name, max16chars | Modify the bluetooth name, take efect after restart of chip | correct: OK\n / error: ERR\n|
 |BT+PR\r\n | | Pairing|
 |BT+AC\r\n | | The last paired device connected (connect to last device?)|
 |BT+DC\r\n | | Disconect|
@@ -62,6 +64,27 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 |COM+MMFM\r\n | | Query currently selected preset (FM Mode) | correct: MFMxx \ n,xx: 01-99 / error: ERR\n|
 |COM+MFFMXX\r\n | | Inquire FM of xx No. A frequency corresponding to (FM Mode) | correct: FM_FQ = xxx\n, error: ERR\n|
 
+# firmware 1.2/1.3 commands
+
+tested on 1.2 board almost all works, check notes below table
+
+|Serial command |Parameter Description | Instruction Description Function | Responce|
+|---------------|----------------------|----------------------------------|---------|
+|COM+SNAME+XXX\r\n |XXX: New name, max 16chars | Modify the bluetooth name, take efect after restart of chip | correct: OK\n / error: ERR\n|
+|COM+SPIN+YYY\r\n |YYYY: New pin,max 16chars|Modify Bluetooth pairing secret code | correct: OK\n / error: ERR\n|
+|COM+TONExx\r\n |XX: ON or OFF| enable/disable info voice| correct: OK\n / error: ERR\n|
+|COM+MTONE\r\n ||Query voice state |TONEON\r\n : voice info enabled, TONEOFF\r\n: voice info off|
+|COM+GOBACKxx\r\n |xx : " ON "Even back open; " OFF "Off time even support,power-down to save power is turned back on by default even (???)|Power-on time even setting| 
+|COM+MGOBACK\r\n ||Query back to even the set|ON: GOBACKON\r\n; shut down: GOBACKOFF \ r \ n|
+|COM+CALLxx\r\n |xx : " ON "Open calls; xx : " OFF "Close call function enabled by default to support power-down save function calls| Call feature set ||
+|COM+MCALL\r\n ||Query Call| ON: CALLON \ r \ n;OFF CALLOFF \ r \ n|
+|COM+REBOOT\r\n |This is equivalent to power restart Restart|Restart|COM + REBOOT \ r \ n|
+
+notes:
+
+SNAME: module take only 6chars, for KOVO1234 it take only KOVO12)
+
+SPIN: did not work for me, module restart it self, and still no pin required after this
 
 ## Query / feedback command
 

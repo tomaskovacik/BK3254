@@ -402,9 +402,8 @@ uint16_t BK3254::returnFreq(String receivedString) {
   #define BK3254_MCALL "MCALL"
   #define BK3254_REBOOT "REBOOT"
 
-  no one of these command works on my module :/
-  but I have V1.1 and pdf is for V1.2
-  SPIN sould works only on V1.3 based on pdf name ... 
+  these works onl on boards with V1.2 firmware
+  SPIN sould works only on V1.3 based on pdf name ... on 1.2 it disconect BT
 */
 
 uint8_t BK3254::voicesOn() {
