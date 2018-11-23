@@ -62,15 +62,15 @@ Follow this link to arduino.cc: https://www.arduino.cc/en/Guide/Libraries#toc5
 |COM+SETFMXXXX\r\n | XXX : 875 to 1081 | set up FM frequency to XXXX (0875-1080) | correct: OK\n / error: ERR\n|
 |COM+MRFM\r\n | | Query current FM frequency (FM Mode) | correct: FM_FQ = xxx\n. xxx: 0875-1081(87.5-108.1Mhz) / error: ERR\n|
 |COM+MMFM\r\n | | Query currently selected preset (FM Mode) | correct: MFMxx \ n,xx: 01-99 / error: ERR\n|
-|COM+MFFMXX\r\n | | Inquire FM of xx No. A frequency corresponding to (FM Mode) | correct: FM_FQ = xxx\n, error: ERR\n|
+|COM+MFFMXX\r\n | | Inquire FM of xx No.(of preset??) A frequency corresponding to (FM Mode) | correct: FM_FQ = xxx\n, error: ERR\n|
 
-# firmware 1.2/1.3 commands
+# Commands for modules with firmware 1.2/1.3
 
 tested on 1.2 board almost all works, check notes below table
 
 |Serial command |Parameter Description | Instruction Description Function | Responce|
 |---------------|----------------------|----------------------------------|---------|
-|COM+SNAME+XXX\r\n |XXX: New name, max 16chars | Modify the bluetooth name, take efect after restart of chip | correct: OK\n / error: ERR\n|
+|COM+SNAME+XXX\r\n |XXX: New name, max 16chars(see note) | Modify the bluetooth name, take efect after restart of chip | correct: OK\n / error: ERR\n|
 |COM+SPIN+YYY\r\n |YYYY: New pin,max 16chars|Modify Bluetooth pairing secret code | correct: OK\n / error: ERR\n|
 |COM+TONExx\r\n |XX: ON or OFF| enable/disable info voice| correct: OK\n / error: ERR\n|
 |COM+MTONE\r\n ||Query voice state |TONEON\r\n : voice info enabled, TONEOFF\r\n: voice info off|
@@ -79,23 +79,40 @@ tested on 1.2 board almost all works, check notes below table
 |COM+CALLxx\r\n |xx : " ON "Open calls; xx : " OFF "Close call function enabled by default to support power-down save function calls| Call feature set ||
 |COM+MCALL\r\n ||Query Call| ON: CALLON \ r \ n;OFF CALLOFF \ r \ n|
 |COM+REBOOT\r\n |This is equivalent to power restart Restart|Restart|COM + REBOOT \ r \ n|
+|COM+MPM0\r\n | The default play mode PLAY_M0 | Repeat All Tracks (TF/USB disk mode) | correct: PLAY_M0\n / error: ERR\n|
+|COM+MPM1\r\n | | Single loop (TF/USB disk mode) | correct: PLAY_M1\n / error: ERR\n|
+|COM+MPM2\r\n | | No single loop (TF/USB disk mode) | correct: PLAY_M2\n / error: ERR\n|
+|COM+MPMC\r\n | | The current inquiry MP3 Play Mode (TF/USB disk mode) | correct: All cycle: PLAY_M0\n / Single cycle: PLAY_M1\n / No single cycle: PLAY_M2\n |
+
+
+
+
+# Commands for modules with firmware 1.4 (currently untested but implemented)
+|Serial command |Parameter Description | Instruction Description Function | Responce|
+|---------------|----------------------|----------------------------------|---------|
+|COM+MP3AUTOPLYxx|U plate/ TF Mode: xx : " ON "On Autoplay xx : " OFF "Turn off Autoplay support power-down to save the default open automatically play|Autoplay settings|COM + MP3AUTOPLYON \r\n Autoplay On COM + MP3AUTOPLYOFF\r\n Turn off Autoplay effective immediately|
+|COM+MP3AUTOPLY||Query Autoplay Set up | COM + MP3AUTOPLY\r\n ON: MP3AUTOPLYON\n shut down: MP3AUTOPLYOFF\n|
 
 notes:
 
-SNAME: module take only 6chars, for KOVO1234 it take only KOVO12)
+SNAME: module is stripping last 2 characters so send two more charactes (name  ), for max name of 16chars send 18 chars, tested:
+COM+SNAME+1234567812345678  
+COM+SNAME+1234567812345678  OK
 
-SPIN: did not work for me, module restart it self, and still no pin required after this
+SPIN: couse, reinit of BT
 
 ## Query / feedback command
 
 |Serial command | description | Bluetooth return information|
 |---------------|-------------|-----------------------------|
 |AT+MR\r\n | Queries Bluetooth address | AD: 191919191919\r\n|
-|AT+MP\r\n | PIN Code query | PN: 0000\r\n|
+|AT+MP\r\n | (droped in firmware V1.4) PIN Code query | PN: 0000\r\n|
 |AT+MN\r\n | Bluetooth name query | NA: BK3254\r\n|
 |AT+MO\r\n | Bluetooth connection status inquiry | connection succeeded: C1\r\n / no connection: C0\r\n|
 |AT+MV\r\n | Bluetooth playback status inquiry | Play: MB\r\n / time out: MA\r\n / disconnect: M0\r\n|
 |AT+MY\r\n | Bluetooth inquiry HFP status | disconnect: M0\r\n / connection: M1\r\n / Caller: M2\r\n / Outgoing: M3\r\n / calling: M4\r\n|
+
+NOTES: AT+MP droped in version 1.4, based on info in datasheet, untested if it's true
 
 
 ## BLUETOOTH STATE SEND BY MODULE
@@ -106,8 +123,12 @@ SPIN: did not work for me, module restart it self, and still no pin required aft
 |OK\n | |
 |II\r\n | connection succeeded|
 |IA\r\n | disconnect|
-|PLAY_ALL\n | Repeat All Tracks (TF/SDcard Mode)|
-|PLAY_ONE\n | Repeat One Track (TF/SDcard Mode)|
+|PLAY_ALL\n | Repeat All Tracks (TF/SDcard Mode) - to firmware below V1.3|
+|PLAY_M0\n | Repeat All Tracks (TF/SDcard Mode) - from firmware V1.4|
+|PLAY_ONE\n | Repeat One Track (TF/SDcard Mode) - to firmware V1.3|
+|PLAY_M1\n | Repeat One Track (TF/SDcard Mode) - from firmware V1.4|
+|PLAY_M2\n | No repeat One Track (TF/SDcard Mode) - from firmware V1.4|
+|MUSICPLYFINISH\n | Automatically after playing one song (TF/U Under disk mode)|
 |VOLx\n | The current volume x level|
 |FM_FQ = 1081\n | Tunner frequency|
 |music_mun = x\n | Song number|

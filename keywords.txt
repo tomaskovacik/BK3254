@@ -34,6 +34,7 @@ switchInputToUsb	KEYWORD2
 getCurrentInput	KEYWORD2
 musicModeRepeatAll	KEYWORD2
 musicModeRepeatOne	KEYWORD2
+musicModeRepeatNone	KEYWORD2
 musicGetCurrentMode	KEYWORD2
 musicPlaySong	KEYWORD2
 cardGetCurrentPlayingSongNumber	KEYWORD2
@@ -64,6 +65,10 @@ callOn	KEYWORD2
 callOff	KEYWORD2
 getCall	KEYWORD2
 reboot	KEYWORD2
+changePin	KEYWORD2
+autoPlayOn	KEYWORD2
+autoPlayOff	KEYWORD2
+getAutoPlay	KEYWORD2
 
 Playing	LITERAL1
 Idle	LITERAL1
@@ -82,8 +87,9 @@ USB	LITERAL1
 SD	LITERAL1
 Connecting	LITERAL1
 Busy	LITERAL1
-PlayAll	LITERAL1
-PlayOne	LITERAL1
+RepeatAll	LITERAL1
+RepeatOne	LITERAL1
+RepeatNone	LITERAL1
 FM	LITERAL1
 BTState	LITERAL1
 CallState	LITERAL1
