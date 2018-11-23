@@ -279,12 +279,15 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
   } else if (memcmp(&receivedString[0], "ON", 2) == 0) {
     //DBG("Bluetooth turned on\n");
     PowerState = On;
-  } else if (memcmp(&receivedString[0], "PLAY_ALL", 8) == 0) {
+  } else if (memcmp(&receivedString[0], "PLAY_ALL", 8) == 0 || memcmp(&receivedString[0], "PLAY_M0", 7) == 0) {
     //DBG("Repeat All Tracks (TF/SDcard Mode)\n");
-    MusicMode = PlayAll;
-  } else if (memcmp(&receivedString[0], "PLAY_ONE", 8) == 0) {
+    MusicMode = RepeatAll;
+  } else if (memcmp(&receivedString[0], "PLAY_ONE", 8) == 0 || memcmp(&receivedString[0], "PLAY_M1", 7) == 0) {
     //DBG("Repeat One Track (TF/SDcard Mode)");
-    MusicMode = PlayOne;
+    MusicMode = RepeatOne;
+  } else if (memcmp(&receivedString[0], "PLAY_M2", 7) == 0) {
+    //DBG("Repeat None (TF/SDcard Mode)");
+    MusicMode = RepeatNone;
   } else if (memcmp(&receivedString[0], "SD_PA", 5) == 0) {
     //DBG("SD Card playing status");
     InputSelected = SD;
@@ -369,6 +372,8 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
   } else if (memcmp(&receivedString[0], "MFM", 3) == 0) {
    // DBG("Current preset: ");
     CurrentPreset = receivedString.substring(3).toInt();
+  } else if (memcmp(&receiveString[0], "MUSICPLYFINISH", 14) == 0 ) {
+    MusicState = Idle;	
   }
   return 1;
 }
@@ -396,10 +401,10 @@ uint16_t BK3254::returnFreq(String receivedString) {
   #define BK3254_GET_VOICES_STATE "MTONE"
   #define BK3254_GOBACKON "GOBACKON"
   #define BK3254_GOBACKOFF "GOBACKOFF"
-  #define BK3254_MGOBACK "MGOBACK"
+  #define BK3254_GET_GOBACK_STATE "MGOBACK"
   #define BK3254_CALLON "CALLON"
   #define BK3254_CALLOFF "CALLOFF"
-  #define BK3254_MCALL "MCALL"
+  #define BK3254_GET_CALL_STATE "MCALL"
   #define BK3254_REBOOT "REBOOT"
 
   these works onl on boards with V1.2 firmware
@@ -438,7 +443,7 @@ uint8_t BK3254::goBackOff() {
 
 uint8_t BK3254::getGoBack() {
   BK3254::getNextEventFromBT();
-  BK3254::sendCOMData(BK3254_MGOBACK);
+  BK3254::sendCOMData(BK3254_GET_GOBACK_STATE);
   return BK3254::getNextEventFromBT();
 }
 
@@ -456,9 +461,28 @@ uint8_t BK3254::callOff() {
 
 uint8_t BK3254::getCall() {
   BK3254::getNextEventFromBT();
-  BK3254::sendCOMData(BK3254_MCALL);
+  BK3254::sendCOMData(BK3254_GET_CALL_STATE);
   return BK3254::getNextEventFromBT();
 }
+
+uint8_t BK3254::autoPlayOn() {
+  BK3254::getNextEventFromBT();
+  BK3254::sendCOMData(BK3254_AUTOPLAYON);
+  return BK3254::getNextEventFromBT();
+}
+
+uint8_t BK3254::autoPlayOff() {
+  BK3254::getNextEventFromBT();
+  BK3254::sendCOMData(BK3254_AUTOPLAYOFF);
+  return BK3254::getNextEventFromBT();
+}
+
+uint8_t BK3254::getAutoPlay() {
+  BK3254::getNextEventFromBT();
+  BK3254::sendCOMData(BK3254_GET_AUTOPLAY_STATE);
+  return BK3254::getNextEventFromBT();
+}
+
 
 uint8_t BK3254::reboot() {
   BK3254::getNextEventFromBT();
@@ -476,7 +500,7 @@ uint8_t BK3254::changePin(String newPin) {//this command did not work on my modu
     return false;
   } else {
     DBG("Writing pin\n");
-    BK3254::sendCOMData(BK3254_SPIN + newPin);
+    BK3254::sendCOMData(BK3254_CHANGE_PIN + newPin);
   }
   return BK3254::getNextEventFromBT();
 }
@@ -641,17 +665,24 @@ uint8_t BK3254::getCurrentInput() { //BK3254_INPUT_GET_CURRENT "COM+IQ" //Query 
   return BK3254::getNextEventFromBT();
 }
 
-uint8_t BK3254::musicModeRepeatAll() { //BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ALL "COM+MPM0" //Repeat All Tracks (TF/USB disk mode)  correct: PLAY_ALL\n / error: ERR\n
+uint8_t BK3254::musicModeRepeatAll() { //BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ALL "COM+MPM0" //Repeat All Tracks (TF/USB disk mode)  correct: PLAY_ALL\n / error: ERR\n;  from firmware 1.4: correct: PLAY_M0 \ n
   BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ALL);
   return BK3254::getNextEventFromBT();
 }
 
-uint8_t BK3254::musicModeRepeatOne() { //BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ONE "COM+MPM1" //Single loop (TF/USB disk mode)  correct: PLAY_ONE\n / error: ERR\n
+uint8_t BK3254::musicModeRepeatOne() { //BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ONE "COM+MPM1" //Single loop (TF/USB disk mode)  correct: PLAY_ONE\n / error: ERR\n ;from firmware 1.4: correct: PLAY_M1 \ n
   BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ONE);
   return BK3254::getNextEventFromBT();
 }
+
+uint8_t BK3254::musicModeRepeatNone() { //BK3254_MUSIC_PLAYBACK_MODE_REPEAT_NONE  //No single loop (TF/USB disk mode)  correct: PLAY_M2\n / error: ERR\n
+  BK3254::getNextEventFromBT();
+  BK3254::sendCOMData(BK3254_MUSIC_PLAYBACK_MODE_REPEAT_NONE);
+  return BK3254::getNextEventFromBT();
+}
+
 
 uint8_t BK3254::musicGetCurrentMode() { //BK3254_MUSIC_PLAYBACK_MODE_GET_CURRENT "COM+MPMC" //The current inquiry MP3 Play Mode (TF/USB disk mode)  correct: PLAY_ALL\n / PLAY_ONE\n
   BK3254::getNextEventFromBT();

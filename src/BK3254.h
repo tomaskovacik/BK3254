@@ -29,14 +29,17 @@
 #define BK3254_GET_VOICES_STATE "MTONE"
 #define BK3254_GOBACKON "GOBACKON"
 #define BK3254_GOBACKOFF "GOBACKOFF"
-#define BK3254_MGOBACK "MGOBACK"
+#define BK3254_GET_GOBACK_STATE "MGOBACK"
 #define BK3254_CALLON "CALLON"
 #define BK3254_CALLOFF "CALLOFF"
-#define BK3254_MCALL "MCALL"
+#define BK3254_GET_CALL_STATE "MCALL"
 #define BK3254_REBOOT "REBOOT"
+#define BK3254_AUTOPLAYON "MP3AUTOPLYON" //
+#define BK3254_AUTOPLAYOFF "MP3AUTOPLYOFF" //
+#define BK3254_GET_AUTOPLAY_STATE "MP3AUTOPLY" //
 //probably work only with V1.3 based on this: https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/BK3254_V1.3_HYT.zh-CN.en.pdf
 // on 1.2 firmware this only disconnect BT
-#define BK3254_SPIN "SPIN+"
+#define BK3254_CHANGE_PIN "SPIN+"
 
 //works with v1.1 for sure:
 #define BK3254_PAIRING "PR" //Pairing   
@@ -63,8 +66,9 @@
 #define BK3254_INPUT_FM "MFM" //FM Mode (if available)  
 #define BK3254_INPUT_USB "MUD" //USB Disk mode (if available)  
 #define BK3254_INPUT_GET_CURRENT "IQ" //Query the current mode  
-#define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ALL "MPM0" //Repeat All Tracks (TF/USB disk mode)  correct: PLAY_ALL\n / error: ERR\n
-#define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ONE "MPM1" //Single loop (TF/USB disk mode)  correct: PLAY_ONE\n / error: ERR\n
+#define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ALL "MPM0" //Repeat All Tracks (TF/USB disk mode)  correct: PLAY_ALL\n / error: ERR\n; from firmware 1.4: correct: PLAY_M0 \ n
+#define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ONE "MPM1" //Single loop (TF/USB disk mode)  correct: PLAY_ONE\n / error: ERR\n; rom firmware 1.4: correct: PLAY_M1 \ n
+#define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_NONE "MPM2" //No single loop (TF/USB disk mode)  correct: PLAY_M2\n / error: ERR\n
 #define BK3254_MUSIC_PLAYBACK_MODE_GET_CURRENT "MPMC" //The current inquiry MP3 Play Mode (TF/USB disk mode)  correct: PLAY_ALL\n / PLAY_ONE\n
 #define BK3254_MUSIC_PLAY_SONG_NUMBER "SMP" //SMP+XXXX, Play selections (TF/USB disk mode)  XXXX: 0001-9999, 0001 Represents the 1 first
 #define BK3254_TF_GET_SONG_NUMBER "MRMP3" //Query currently playing MP3 Song number   correct: music_mun = x\n , x: 1-9999 / error: ERR\n ???
@@ -82,11 +86,12 @@
 //Query / feedback commands
 
 #define BK3254_GET_ADDRESS "MR" //Queries Bluetooth address   AD: 191919191919\r\n
-#define BK3254_GET_PIN_CODE "MP" //PIN Code query  PN: 0000\r\n
+#define BK3254_GET_PIN_CODE "MP" //PIN Code query  PN: 0000\r\n , droped in firmware V1.4
 #define BK3254_GET_NAME "MN" //Bluetooth name query  NA: BK3254\r\n
 #define BK3254_GET_CONNECTION_STATUS "MO" //Bluetooth connection status inquiry   connection succeeded: C1\r\n / no connection: C0\r\n
 #define BK3254_GET_MUSIC_STATUS "MV" //Bluetooth playback status inquiry   Play: MB\r\n / time out: MA\r\n / disconnect: M0\r\n
 #define BK3254_GET_HFP_STATUS "MY" //Bluetooth inquiry HFP status  disconnect: M0\r\n / connection: M1\r\n / Caller: M2\r\n / Outgoing: M3\r\n / calling: M4\r\n
+
 
 #if defined(USE_SW_SERIAL)
 #if ARDUINO >= 100
@@ -120,9 +125,10 @@ class BK3254
       SD,                  //0x0E
       Connecting,          //0x0F
       Busy,                //0x10
-      PlayAll,             //0x11
-      PlayOne,             //0x12
-      FM                   //0x13
+      RepeatAll,             //0x11
+      RepeatOne,             //0x12
+      RepeatNone,             //0x13
+      FM                   //0x14
     };
 
     uint16_t BTState = Disconnected;
@@ -130,7 +136,7 @@ class BK3254
     uint16_t MusicState = Idle;
     uint16_t PowerState = Off;
     uint16_t InputSelected = BT;
-    uint16_t MusicMode = PlayOne;
+    uint16_t MusicMode = RepeatOne;
     uint16_t currentVolume=8;
     uint16_t NumberOfSongs=0;
     uint16_t CurrentlyPlayingSong;
@@ -188,6 +194,7 @@ class BK3254
     uint8_t getCurrentInput();
     uint8_t musicModeRepeatAll();
     uint8_t musicModeRepeatOne();
+    uint8_t musicModeRepeatNone();
     uint8_t musicGetCurrentMode();
     uint8_t musicPlaySong(uint16_t number);
     uint8_t cardGetCurrentPlayingSongNumber();
@@ -209,9 +216,8 @@ class BK3254
     uint8_t getHFPStatus();
     uint8_t changeName(String newName);
     uint8_t changePin(String newPin);
-    //??
-    // from F-6888_BK3254_product_information.zh_CN.rtf
 
+   //commands works from firmwarev1.2
     uint8_t voicesOn();
     uint8_t voicesOff();
     uint8_t getVoicesState();
@@ -222,6 +228,10 @@ class BK3254
     uint8_t callOff();
     uint8_t getCall();
     uint8_t reboot();
+   //commands works from firmware V1.4
+    uint8_t autoPlayOn();
+    uint8_t autoPlayOff();
+    uint8_t getAutoPlay();
 
     //??
   private:

@@ -122,8 +122,10 @@ void loop() {
         Serial.println(F("getCall                2"));
         Serial.println(F("reboot                 3"));
         Serial.println(F("print all info         4"));
-        Serial.println(F("change pin             5"));
-        Serial.println();
+        Serial.println(F("change pin             5+PIN"));
+        Serial.println(F("Get autoplay status    6"));
+        Serial.println(F("Autoplay On            7"));
+        Serial.println(F("Autoplay Off           8"));
         printAllInfo();
 
         break;
@@ -352,6 +354,21 @@ void loop() {
           BT.changePin(str);
         }
         break;
+      case '6':
+        {
+          BT.getAutoPlay();
+        }
+        break;
+      case '7':
+        {
+          BT.autoPlayOn();
+        }
+        break;
+      case '8':
+        {
+          BT.autoPlayOff();
+        }
+        break;
     }
   }
 
@@ -459,11 +476,14 @@ void printCurrentPreset() {
 
 void printMusicMode() {
   switch (BT.MusicMode) {
-    case (BT.PlayAll):
-      Serial.println(F("Music play all"));
+    case (BT.RepeatAll):
+      Serial.println(F("Repeat all"));
       break;
-    case (BT.PlayOne):
-      Serial.println(F("Music play one"));
+    case (BT.RepeatOne):
+      Serial.println(F("Repeat one"));
+      break;
+    case (BT.RepeatNone):
+      Serial.println(F("No repeat"));
       break;
   }
 }
@@ -531,4 +551,5 @@ void printPowerState() {
       break;
   }
 }
+
 
