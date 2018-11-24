@@ -70,9 +70,9 @@ tested on 1.2 board almost all works, check notes below table
 
 |Serial command |Parameter Description | Instruction Description Function | Responce|
 |---------------|----------------------|----------------------------------|---------|
-|COM+SNAME+XXX\r\n |XXX: New name, max 16chars(see note) | Modify the bluetooth name, take efect after restart of chip | correct: OK\n / error: ERR\n|
+|COM+SNAME+XXX\r\n |XXX: New name, max 16chars | Modify the bluetooth name, take efect after restart of chip | correct: OK\n / error: ERR\n|
 |COM+SPIN+YYY\r\n |YYYY: New pin,max 16chars|Modify Bluetooth pairing secret code | correct: OK\n / error: ERR\n|
-|COM+TONExx\r\n |XX: ON or OFF| enable/disable info voice| correct: OK\n / error: ERR\n|
+|COM+TONExx\r\n |XX: ON or OFF| enable/disable info voice, really it just set volume to really low, can hear with high volume| correct: OK\n / error: ERR\n|
 |COM+MTONE\r\n ||Query voice state |TONEON\r\n : voice info enabled, TONEOFF\r\n: voice info off|
 |COM+GOBACKxx\r\n |xx : " ON "Even back open; " OFF "Off time even support,power-down to save power is turned back on by default even (???)|Power-on time even setting| 
 |COM+MGOBACK\r\n ||Query back to even the set|ON: GOBACKON\r\n; shut down: GOBACKOFF \ r \ n|
@@ -93,13 +93,6 @@ tested on 1.2 board almost all works, check notes below table
 |COM+MP3AUTOPLYxx|U plate/ TF Mode: xx : " ON "On Autoplay xx : " OFF "Turn off Autoplay support power-down to save the default open automatically play|Autoplay settings|COM + MP3AUTOPLYON \r\n Autoplay On COM + MP3AUTOPLYOFF\r\n Turn off Autoplay effective immediately|
 |COM+MP3AUTOPLY||Query Autoplay Set up | COM + MP3AUTOPLY\r\n ON: MP3AUTOPLYON\n shut down: MP3AUTOPLYOFF\n|
 
-notes:
-
-SNAME: module is stripping last 2 characters so send two more charactes (name  ), for max name of 16chars send 18 chars, tested:
-COM+SNAME+1234567812345678  
-COM+SNAME+1234567812345678  OK
-
-SPIN: couse, reinit of BT
 
 ## Query / feedback command
 
