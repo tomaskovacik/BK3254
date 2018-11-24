@@ -75,7 +75,7 @@ tested on 1.2 board almost all works, check notes below table
 |COM+TONExx\r\n |XX: ON or OFF| enable/disable info voice, really it just set volume to really low, can hear with high volume| correct: OK\n / error: ERR\n|
 |COM+MTONE\r\n ||Query voice state |TONEON\r\n : voice info enabled, TONEOFF\r\n: voice info off|
 |COM+GOBACKxx\r\n |xx : " ON "Even back open; " OFF "Off time even support,power-down to save power is turned back on by default even (???)|Power-on time even setting| 
-|COM+MGOBACK\r\n ||Query back to even the set|ON: GOBACKON\r\n; shut down: GOBACKOFF \ r \ n|
+|COM+MGOBACK\r\n ||Query back to even the set|ON: GOBACKON\r\n; shut down: GOBACKOFF\r\n|
 |COM+CALLxx\r\n |xx : " ON "Open calls; xx : " OFF "Close call function enabled by default to support power-down save function calls| Call feature set ||
 |COM+MCALL\r\n ||Query Call| ON: CALLON \ r \ n;OFF CALLOFF \ r \ n|
 |COM+REBOOT\r\n |This is equivalent to power restart Restart|Restart|COM + REBOOT \ r \ n|
@@ -104,6 +104,10 @@ tested on 1.2 board almost all works, check notes below table
 |AT+MO\r\n | Bluetooth connection status inquiry | connection succeeded: C1\r\n / no connection: C0\r\n|
 |AT+MV\r\n | Bluetooth playback status inquiry | Play: MB\r\n / time out: MA\r\n / disconnect: M0\r\n|
 |AT+MY\r\n | Bluetooth inquiry HFP status | disconnect: M0\r\n / connection: M1\r\n / Caller: M2\r\n / Outgoing: M3\r\n / calling: M4\r\n|
+|COM+MTONE\r\n| Query state of voice info| TONEON\r\n : voice info enabled, TONEOFF\r\n: voice info off|
+|COM+MGOBACK\r\n|Query set of back to even state|ON: GOBACKON\r\n; OFF: GOBACKOFF\r\n|
+|COM+MCALL\r\n|Query Call|ON: CALLON\r\n;OFF CALLOFF\r\n|
+|COM+MP3AUTOPLY\r\n|Query Autoplay Set up|ON: MP3AUTOPLYON\n shut down: MP3AUTOPLYOFF\n|
 
 NOTES: AT+MP droped in version 1.4, based on info in datasheet, untested if it's true
 
