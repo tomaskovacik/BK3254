@@ -372,7 +372,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
   } else if (memcmp(&receivedString[0], "MFM", 3) == 0) {
    // DBG("Current preset: ");
     CurrentPreset = receivedString.substring(3).toInt();
-  } else if (memcmp(&receiveString[0], "MUSICPLYFINISH", 14) == 0 ) {
+  } else if (memcmp(&receivedString[0], "MUSICPLYFINISH", 14) == 0 ) {
     MusicState = Idle;	
   }
   return 1;
