@@ -8,7 +8,6 @@
 
 
 #include "BK3254.h"
-#include <SoftwareSerial.h>
 
 
 uint16_t BTState;
