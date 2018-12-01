@@ -9,6 +9,7 @@
 
 #include "BK3254.h"
 
+#define resetBTpin 5
 
 uint16_t BTState;
 uint16_t CallState;
@@ -23,7 +24,7 @@ String CallerID = "";
 
 SoftwareSerial swSerial(7, 6); //rxPin, txPin, inverse_logic
 
-BK3254 BT(&swSerial, 5);
+BK3254 BT(&swSerial, resetBTpin);
 
 #define INITVOLUME "1"
 
