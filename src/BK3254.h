@@ -92,6 +92,8 @@
 #define BK3254_GET_MUSIC_STATUS "MV" //Bluetooth playback status inquiry   Play: MB\r\n / time out: MA\r\n / disconnect: M0\r\n
 #define BK3254_GET_HFP_STATUS "MY" //Bluetooth inquiry HFP status  disconnect: M0\r\n / connection: M1\r\n / Caller: M2\r\n / Outgoing: M3\r\n / calling: M4\r\n
 
+#define fmNextTrack musicNextTrack
+#define fmPreviousTrack musicPreviousTrack
 
 #if defined(USE_SW_SERIAL)
 #if ARDUINO >= 100
@@ -136,7 +138,7 @@ class BK3254
     uint16_t MusicState = Idle;
     uint16_t PowerState = Off;
     uint16_t InputSelected = BT;
-    uint16_t MusicMode = RepeatOne;
+    uint16_t ModeOfPlay = RepeatOne;
     uint16_t currentVolume=8;
     uint16_t NumberOfSongs=0;
     uint16_t CurrentlyPlayingSong;
@@ -175,9 +177,7 @@ class BK3254
     uint8_t callRedial();
     uint8_t musicTogglePlayPause();
     uint8_t musicNextTrack();
-    uint8_t fmNextTrack();
     uint8_t musicPreviousTrack();
-    uint8_t fmPreviousTrack();
     uint8_t volumeUp();
     uint8_t volumeDown();
     uint8_t volumeSet(String volume);
