@@ -101,6 +101,7 @@ uint8_t BK3254::sendData(String cmd) {
 }
 
 uint8_t BK3254::sendCOMData(String cmd) {
+  BK3254::getNextEventFromBT();
   String Command = "COM+" + cmd + "\r\n";
 #if defined DEBUG
   DBG("sending " + Command);
@@ -110,6 +111,7 @@ uint8_t BK3254::sendCOMData(String cmd) {
 }
 
 uint8_t BK3254::sendBTData(String cmd) {
+  BK3254::getNextEventFromBT();
   String Command = "BT+" + cmd + "\r\n";
 #if defined DEBUG
   DBG("sending " + Command);
@@ -119,6 +121,7 @@ uint8_t BK3254::sendBTData(String cmd) {
 }
 
 uint8_t BK3254::sendFMData(String cmd) {
+  BK3254::getNextEventFromBT();
   String Command = "FM+" + cmd + "\r\n";
 #if defined DEBUG
   DBG("sending " + Command);
@@ -528,80 +531,66 @@ uint16_t BK3254::returnFreq(String receivedString) {
 */
 
 uint8_t BK3254::voicesOn() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_VOICES_ON);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::voicesOff() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_VOICES_OFF);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::getVoicesState() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_GET_VOICES_STATE);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::goBackOn() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_GOBACKON);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::goBackOff() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_GOBACKOFF);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::getGoBack() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_GET_GOBACK_STATE);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::callOn() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_CALLON);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::callOff() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_CALLOFF);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::getCall() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_GET_CALL_STATE);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::autoPlayOn() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_AUTOPLAYON);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::autoPlayOff() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_AUTOPLAYOFF);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::getAutoPlay() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_GET_AUTOPLAY_STATE);
   return BK3254::getNextEventFromBT();
 }
 
-
 uint8_t BK3254::reboot() {
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_REBOOT);
   return BK3254::getNextEventFromBT();
 }
@@ -610,7 +599,6 @@ uint8_t BK3254::reboot() {
 
 */
 uint8_t BK3254::changePin(String newPin) {//this command did not work on my module ...
-  BK3254::getNextEventFromBT();
   if (newPin.length() - 2 > 16) { //count for termination char
 #if defined DEBUG
     DBG("Pin to long, max 16chars");
@@ -629,7 +617,6 @@ uint8_t BK3254::changePin(String newPin) {//this command did not work on my modu
 
 */
 uint8_t BK3254::changeName(String newName) {//this command did not work on my module ...
-  BK3254::getNextEventFromBT();
   if (newName.length() - 2 > 16) { //count for termination char
 #if defined DEBUG
     DBG("name to long, max 16chars");
@@ -645,281 +632,233 @@ uint8_t BK3254::changeName(String newName) {//this command did not work on my mo
 }
 
 uint8_t BK3254::pairingInit() { //BK3254_PAIRING "BT+PR" //Pairing
-  BK3254::getNextEventFromBT();
   BK3254::sendBTData(BK3254_PAIRING);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::connectLastDevice() {//   BK3254_PAIRING_DEVICE "BT+AC" //The last paired device connected (connect to last device?)
-  BK3254::getNextEventFromBT();
   BK3254::sendBTData(BK3254_PAIRING_DEVICE);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::disconnect() {// BK3254_DISCONNECT "BT+DC" //Disconect
-  BK3254::getNextEventFromBT();
   BK3254::sendBTData(BK3254_DISCONNECT);
   return BK3254::getNextEventFromBT();
 }
 
 
 uint8_t BK3254::callAnsware() { //BK3254_CALL_ANSWARE "BT+CA" //Answare the call
-  BK3254::getNextEventFromBT();
   BK3254::sendBTData(BK3254_CALL_ANSWARE);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::callReject() { //BK3254_CALL_REJECT "BT+CJ" //To reject a call
-  BK3254::getNextEventFromBT();
   BK3254::sendBTData(BK3254_CALL_REJECT);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::callHangUp() { //BK3254_CALL_HANGUP "BT+CE" //Hang up the phone
-  BK3254::getNextEventFromBT();
   BK3254::sendBTData(BK3254_CALL_HANGUP);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::callRedial() { //BK3254_CALL_REDIAL "BT+CR" //Last number redial
-  BK3254::getNextEventFromBT();
   BK3254::sendBTData(BK3254_CALL_REDIAL);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::musicTogglePlayPause() { //BK3254_MUSIC_TOGGLE_PLAY_PAUSE "COM+PR" //Music Play / Pause
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_MUSIC_TOGGLE_PLAY_PAUSE);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::musicNextTrack() { //BK3254_MUSIC_NEXT_TRACK "COM+PN" //next track/ FM next station
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_MUSIC_NEXT_TRACK);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::musicPreviousTrack() { //BK3254_MUSIC_PREVIOUS_TRACK "COM+PV" //previous piece/ FM On one
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_MUSIC_PREVIOUS_TRACK);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::volumeUp() { //BK3254_VOLUME_UP "COM+VP" //Volume Up
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_VOLUME_UP);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::volumeDown() { //BK3254_VOLUME_DOWN "COM+VD" //Volume down
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_VOLUME_DOWN);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::volumeSet(String volume) { //BK3254_VOLUME_SET "COM+VOL" //VOL+x: 0x00 - 0xAF  Set the volume  correct: VOLx\n / error: ERR\n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_VOLUME_SET + volume);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::volumeGet() { //BK3254_VOLUME_GET_CURRENT "COM+MVOL" //Query current volume  correct: VOLx\n (x:0-15) / error: ERR\n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_VOLUME_GET_CURRENT);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::shutdown() { //BK3254_SHUTDOWN "COM+PWD" //Shutdown
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_SHUTDOWN);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::standby() { //BK3254_STANDBY "COM+PWDS" //Soft-Off
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_STANDBY);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::powerup() { //BK3254_POWERUP "COM+PWOS" //Soft Power   ???
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_POWERUP);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::switchInput() { //BK3254_INPUT_SWITCH "COM+MC" //Switching to the next operating mode
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_INPUT_SWITCH);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::switchInputToBluetooth() { //BK3254_INPUT_BLUETOOTH "COM+MBT" //Bluetooth mode
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_INPUT_BLUETOOTH);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::switchInputToCard() { //BK3254_INPUT_TF "COM+MSD" //TF/SDcard Mode (if available)
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_INPUT_TF);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::switchInputToAux() { //BK3254_INPUT_AUX "COM+MAX" //AUX Mode (if available)
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_INPUT_AUX);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::switchInputToFm() { //BK3254_INPUT_FM "COM+MFM" //FM Mode (if available)
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_INPUT_FM);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::switchInputToUsb() { //BK3254_INPUT_USB "COM+MUD" //USB Disk mode (if available)
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_INPUT_USB);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::getCurrentInput() { //BK3254_INPUT_GET_CURRENT "COM+IQ" //Query the current mode
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_INPUT_GET_CURRENT);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::musicModeRepeatAll() { //BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ALL "COM+MPM0" //Repeat All Tracks (TF/USB disk mode)  correct: PLAY_ALL\n / error: ERR\n;  from firmware 1.4: correct: PLAY_M0 \ n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ALL);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::musicModeRepeatOne() { //BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ONE "COM+MPM1" //Single loop (TF/USB disk mode)  correct: PLAY_ONE\n / error: ERR\n ;from firmware 1.4: correct: PLAY_M1 \ n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ONE);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::musicModeRepeatNone() { //BK3254_MUSIC_PLAYBACK_MODE_REPEAT_NONE  //No single loop (TF/USB disk mode)  correct: PLAY_M2\n / error: ERR\n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_MUSIC_PLAYBACK_MODE_REPEAT_NONE);
   return BK3254::getNextEventFromBT();
 }
 
-
 uint8_t BK3254::musicGetCurrentMode() { //BK3254_MUSIC_PLAYBACK_MODE_GET_CURRENT "COM+MPMC" //The current inquiry MP3 Play Mode (TF/USB disk mode)  correct: PLAY_ALL\n / PLAY_ONE\n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_MUSIC_PLAYBACK_MODE_GET_CURRENT);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::musicPlaySong(uint16_t number) { //BK3254_MUSIC_PLAY_SONG_NUMBER "COM+SMP" //SMP+XXXX, Play selections (TF/USB disk mode)  XXXX: 0001-9999, 0001 Represents the 1 first
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_MUSIC_PLAY_SONG_NUMBER + (String)number);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::cardGetCurrentPlayingSongNumber() { //BK3254_TF_GET_SONG_NUMBER "COM+MRMP3" //Query currently playing MP3 Song number   correct: music_mun = x\n , x: 1-9999 / error: ERR\n ???
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_TF_GET_SONG_NUMBER);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::cardUsbGetSongsCount() { //BK3254_TF_USB_GET_NUMBER_OF_SONGS "COM+MMMP3" //Query current mode MP3 The number of songs (TF/USB disk mode)   correct: MMMPx\n,x: 1-1999 / error: ERR\n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_TF_USB_GET_NUMBER_OF_SONGS);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::usbGetCurrentPlayingSongNumber() { //BK3254_USB_GET_SONG_NUMBER "COM+MRUSB" //Query currently playing USB Disc song number  correct: music_mun = x\n,x: 1-1999 / error: ERR\n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_USB_GET_SONG_NUMBER);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::fmStartSearch() { //BK3254_FM_START_SEARCH "FM+SC" //FM start station search
-  BK3254::getNextEventFromBT();
   BK3254::sendFMData(BK3254_FM_START_SEARCH);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::fmStopSearch() { //BK3254_FM_STOP_SEARCH "FM+ST" //FM Stop station search
-  BK3254::getNextEventFromBT();
   BK3254::sendFMData(BK3254_FM_STOP_SEARCH);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::fmGetFreq() { //BK3254_FM_GET_FREQ "FM+GF" //Get the current radio frequency   FM_FQ = 875 ~ 1081
-  BK3254::getNextEventFromBT();
   BK3254::sendFMData(BK3254_FM_GET_FREQ);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::fmTunePreset(String preset) { //BK3254_FM_TUNE_PRESET "COM+SFM" //SFM+XX,Select FM preset 01-99  correct: FM_FQ = 998\n / error: ERR\n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_FM_TUNE_PRESET + preset);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::fmTuneFreq(String freq) { //BK3254_FM_TUNE_FREQ "COM+SETFM" //SETFM+XXX, XXX : 875 to 1081   set up FM frequency to XXX  correct: OK\n / error: ERR\n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_FM_TUNE_FREQ + freq);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::fmGetFreq2() { //BK3254_FM_GET_FREQ2 "COM+MRFM" //Query current FM frequency (FM Mode)  correct: FM_FQ = xxx\n. xxx: 875-1081(87.5-108.1Mhz) / error: ERR\n ?? wht is diference to FM+GF ?
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_FM_GET_FREQ2);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::fmGetPreset() { //BK3254_FM_GET_PRESET "COM+MMFM" //Query currently selected preset (FM Mode)   correct: MFMxx \ n,xx: 01-99 / error: ERR\n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_FM_GET_PRESET);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::fmGetFreqOfPreset(String preset) { //BK3254_FM_GET_FREQ_OF_PRESET "COM+MFFM" //MFFM+XX, Inquire FM of xx No. A frequency corresponding to (FM Mode)   correct: FM_FQ = xxx\n, error: ERR\n
-  BK3254::getNextEventFromBT();
   BK3254::sendCOMData(BK3254_FM_GET_FREQ_OF_PRESET + preset);
   return BK3254::getNextEventFromBT();
 }
 //Query / feedback commands
 
 uint8_t BK3254::getAddress() { //BK3254_GET_ADDRESS "AT+MR" //Queries Bluetooth address   AD: 191919191919\r\n
-  BK3254::getNextEventFromBT();
   BK3254::sendData(BK3254_GET_ADDRESS);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::getPinCode() { //BK3254_GET_PIN_CODE "AT+MP" //PIN Code query  PN: 0000\r\n
-  BK3254::getNextEventFromBT();
   BK3254::sendData(BK3254_GET_PIN_CODE);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::getName() { //BK3254_GET_NAME "AT+MN" //Bluetooth name query  NA: BK3254\r\n
-  BK3254::getNextEventFromBT();
   BK3254::sendData(BK3254_GET_NAME);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::getConnectionStatus() { //BK3254_GET_CONNECTION_STATUS "AT+MO" //Bluetooth connection status inquiry   connection succeeded: C1\r\n / no connection: C0\r\n
-  BK3254::getNextEventFromBT();
   BK3254::sendData(BK3254_GET_CONNECTION_STATUS);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::getMusicStatus() { //BK3254_MUSIC_GET_STATUS "AT+MV" //Bluetooth playback status inquiry   Play: MB\r\n / time out: MA\r\n / disconnect: M0\r\n
-  BK3254::getNextEventFromBT();
   BK3254::sendData(BK3254_GET_MUSIC_STATUS);
   return BK3254::getNextEventFromBT();
 }
 
 uint8_t BK3254::getHFPStatus() { //BK3254_GET_HFP_STATUS "AT+MY" //Bluetooth inquiry HFP status  disconnect: M0\r\n / connection: M1\r\n / Caller: M2\r\n / Outgoing: M3\r\n / calling: M4\r\n
-  BK3254::getNextEventFromBT();
   BK3254::sendData(BK3254_GET_HFP_STATUS);
   return BK3254::getNextEventFromBT();
 }
-
