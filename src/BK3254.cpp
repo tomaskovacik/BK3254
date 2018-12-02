@@ -252,7 +252,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     MusicState = Playing;
     BTState = Connected;
     PowerState = On;
-  } else if (memcmp(&receivedString[0], "EEROR", 5) == 0) {
+  } else if (memcmp(&receivedString[0], "ERR", 3) == 0) {
 #if defined DEBUG
     DBG("error");
 #endif
