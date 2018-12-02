@@ -19,7 +19,7 @@
 
 #define USE_SW_SERIAL 1
 
-#define DEBUG 1
+//#define DEBUG 1
 
 // UART COMMANDS
 // works only on v1.2

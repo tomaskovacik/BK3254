@@ -51,7 +51,9 @@ void BK3254::resetHigh() {
 }
 
 void BK3254::resetModule() {
+#if defined DEBUG
   DBG("reseting module");
+#endif
   resetLow();
   delay(100);
   resetHigh();
@@ -61,7 +63,9 @@ void BK3254::resetModule() {
    debug output
 */
 void BK3254::DBG(String text) {
-  if (DEBUG) /*return "DBG: ");*/ Serial.print(text);;
+#if defined DEBUG
+  Serial.print(text);;
+#endif
 }
 
 uint8_t BK3254::getNextEventFromBT() {
@@ -71,7 +75,9 @@ uint8_t BK3254::getNextEventFromBT() {
     c = (btSerial -> read());
     if (c == '\n') {
       if (receivedString == "") { //nothing before enter was received
+#if defined DEBUG
         //DBG("received only empty string\n running again myself...\n");
+#endif
         return BK3254::getNextEventFromBT();
       }
       receivedString = receivedString + c;
@@ -87,28 +93,36 @@ uint8_t BK3254::getNextEventFromBT() {
 
 uint8_t BK3254::sendData(String cmd) {
   String Command = "AT+" + cmd + "\r\n";
+#if defined DEBUG
   DBG("sending " + Command);
+#endif
   delay(100);
   btSerial -> print(Command);
 }
 
 uint8_t BK3254::sendCOMData(String cmd) {
   String Command = "COM+" + cmd + "\r\n";
+#if defined DEBUG
   DBG("sending " + Command);
+#endif
   delay(100);
   btSerial -> print(Command);
 }
 
 uint8_t BK3254::sendBTData(String cmd) {
   String Command = "BT+" + cmd + "\r\n";
+#if defined DEBUG
   DBG("sending " + Command);
+#endif
   delay(100);
   btSerial -> print(Command);
 }
 
 uint8_t BK3254::sendFMData(String cmd) {
   String Command = "FM+" + cmd + "\r\n";
+#if defined DEBUG
   DBG("sending " + Command);
+#endif
   delay(100);
   btSerial -> print(Command);
 }
@@ -164,140 +178,202 @@ uint8_t BK3254::sendFMData(String cmd) {
   IR-"+123456789"
 */
 uint8_t BK3254::decodeReceivedString(String receivedString) {
+#if defined DEBUG
   DBG(receivedString + "\n");
+#endif
   if (memcmp(&receivedString[0], "AX_PA", 5) == 0) {
+#if defined DEBUG
     //DBG("Playing status");
+#endif
     InputSelected = AUX;
     MusicState = Playing;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "AX_PU", 5) == 0) {
+#if defined DEBUG
     //DBG("AUX In a suspended state");
+#endif
     InputSelected = AUX;
     MusicState = Idle;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_AC", 5) == 0) {
+#if defined DEBUG
     //DBG("Bluetooth Even being back");
+#endif
     InputSelected = BT;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_CN", 5) == 0) {
+#if defined DEBUG
     //DBG("Bluetooth connected");
+#endif
     InputSelected = BT;
     BTState = Connected;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_EC", 5) == 0) {
+#if defined DEBUG
     //DBG("Bluetooth He is busy");
+#endif
     InputSelected = BT;
     CallState = Busy;//is this ok?
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_IC", 5) == 0) {
+#if defined DEBUG
     //DBG("Bluetooth A call\n");
+#endif
     InputSelected = BT;
     CallState = IncomingCall;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_WP", 5) == 0) {
+#if defined DEBUG
     //DBG("Bluetooth In pairing state\n");
+#endif
     InputSelected = BT;
     BTState = Pairing;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_WC", 5) == 0) {
+#if defined DEBUG
     //DBG("Bluetooth connection is in wait state\n");
+#endif
     InputSelected = BT;
     BTState = Connecting;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_OC", 5) == 0) {
+#if defined DEBUG
     //DBG("Bluetooth Telephone shot\n");
+#endif
     InputSelected = BT;
     CallState = OutgoingCall;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_PA", 5) == 0) {
+#if defined DEBUG
     DBG("Bluetooth Now Playing\n");
+#endif
     InputSelected = BT;
     CallState = Idle;
     MusicState = Playing;
     BTState = Connected;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "EEROR", 5) == 0) {
+#if defined DEBUG
     //DBG("error");
+#endif
     PowerState = On;
     return 0;
   } else if (memcmp(&receivedString[0], "FM_FQ=", 6) == 0) {
     CurrentFrequency = receivedString.substring(6).toInt();
+#if defined DEBUG
     DBG("Tunner frequency: " + (String)CurrentFrequency + "MHz\n");
+#endif
     InputSelected = FM;
     BTState = Disconnected;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "FM_PA", 5) == 0) {
+#if defined DEBUG
     //DBG("You are listening state\n");
+#endif
     InputSelected = FM;
     MusicState = Playing;
     BTState = Disconnected;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "FM_PU", 5) == 0) {
+#if defined DEBUG
     //DBG("FM In a suspended state\n");
+#endif
     InputSelected = FM;
     MusicState = Idle;
     BTState = Disconnected;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "FM_SC", 5) == 0) {
+#if defined DEBUG
     //DBG("FM The state of being seized Taiwan\n");
+#endif
     InputSelected = FM;
     BTState = Disconnected;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "IA", 2) == 0) {
+#if defined DEBUG
     //DBG("disconnect\n");
+#endif
     InputSelected = BT;
     BTState = Disconnected;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "II", 2) == 0) {
+#if defined DEBUG
     //DBG("connection succeeded\n");
+#endif
     InputSelected = BT;
     BTState = Connected;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "IR-", 3) == 0) {
+#if defined DEBUG
     //DBG("incoming call\n");
+#endif
     InputSelected = BT;
     BTState = Connected;
     CallerID = returnCallerID(receivedString);
     PowerState = On;
   } else if (memcmp(&receivedString[0], "IR", 2) == 0) {
+#if defined DEBUG
     //DBG("Infrared command received\n");
+#endif
     PowerState = On;
   } else if (memcmp(&receivedString[0], "PR-", 3) == 0) {
+#if defined DEBUG
     //DBG("outgoing call\n");
+#endif
     InputSelected = BT;
     BTState = Connected;
     CallerID = returnCallerID(receivedString);
     PowerState = On;
   } else if (memcmp(&receivedString[0], "MMMP", 4) == 0) {
     NumberOfSongs = receivedString.substring(4).toInt();
+#if defined DEBUG
     DBG("Number of songs: " + (char)NumberOfSongs); DBG("\n");
+#endif
   } else if (memcmp(&receivedString[0], "music_mun=", 10) == 0) {
     CurrentlyPlayingSong = receivedString.substring(10).toInt();
+#if defined DEBUG
     DBG("Song number currently playing: " + (char)CurrentlyPlayingSong); DBG("\n");
+#endif
   } else if (memcmp(&receivedString[0], "OK", 2) == 0) {
+#if defined DEBUG
     //DBG("OK");
+#endif
   } else if (memcmp(&receivedString[0], "ON", 2) == 0) {
+#if defined DEBUG
     //DBG("Bluetooth turned on\n");
+#endif
     PowerState = On;
   } else if (memcmp(&receivedString[0], "PLAY_ALL", 8) == 0 || memcmp(&receivedString[0], "PLAY_M0", 7) == 0) {
+#if defined DEBUG
     //DBG("Repeat All Tracks (TF/SDcard Mode)\n");
+#endif
     MusicMode = RepeatAll;
   } else if (memcmp(&receivedString[0], "PLAY_ONE", 8) == 0 || memcmp(&receivedString[0], "PLAY_M1", 7) == 0) {
+#if defined DEBUG
     //DBG("Repeat One Track (TF/SDcard Mode)");
+#endif
     MusicMode = RepeatOne;
   } else if (memcmp(&receivedString[0], "PLAY_M2", 7) == 0) {
+#if defined DEBUG
     //DBG("Repeat None (TF/SDcard Mode)");
+#endif
     MusicMode = RepeatNone;
   } else if (memcmp(&receivedString[0], "SD_PA", 5) == 0) {
+#if defined DEBUG
     //DBG("SD Card playing status");
+#endif
     InputSelected = SD;
     MusicState = Playing;
   } else if (memcmp(&receivedString[0], "SD_PU", 5) == 0) {
+#if defined DEBUG
     //DBG("SD Card is paused");
+#endif
     InputSelected = SD;
     MusicState = Idle;
   } else if (memcmp(&receivedString[0], "SY_PO", 5) == 0) {
+#if defined DEBUG
     //DBG("Bluetooth turned on");
+#endif
     PowerState = On;
     BTState = Disconnected; //init all values
     CallState = Idle;
@@ -309,7 +385,9 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     CurrentFrequency = 0;
     CurrentPreset = 0;
   } else if (memcmp(&receivedString[0], "SY_PF", 5) == 0) {
+#if defined DEBUG
     //DBG("Bluetooth off");
+#endif
     PowerState = Off; //reset all values:
     BTState = Disconnected;
     CallState = Idle;
@@ -321,56 +399,88 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     CurrentFrequency = 0;
     CurrentPreset = 0;
   } else if (memcmp(&receivedString[0], "UD_PA", 5) == 0) {
+#if defined DEBUG
     //DBG("USB Playing status");
+#endif
     InputSelected = USB;
     BTState = Disconnected;
     MusicState = Playing;
   } else if (memcmp(&receivedString[0], "UD_PU", 5) == 0) {
+#if defined DEBUG
     //DBG("USB In a suspended state");
+#endif
     InputSelected = USB;
     BTState = Disconnected;
     MusicState = Idle;
   } else if (memcmp(&receivedString[0], "VOL", 3) == 0) {
     currentVolume = receivedString.substring(3).toInt();
+#if defined DEBUG
     //DBG("The current volume level: "+ (String)currentVolume + "\n");
+#endif
   } else if (memcmp(&receivedString[0], "AD: ", 4) == 0) {
     BT_ADDR = receivedString.substring(5);
+#if defined DEBUG
     //DBG("BT ADDRESS: " + BT_ADDR);
+#endif
   } else if (memcmp(&receivedString[0], "PN: ", 4) == 0) {
     BT_PIN = receivedString.substring(4);
+#if defined DEBUG
     //DBG("Pin received:" + BT_PIN);
+#endif
   } else if (memcmp(&receivedString[0], "NA: ", 4) == 0) {
     BT_NAME = BK3254::returnBtModuleName(receivedString);
+#if defined DEBUG
     //DBG("BT name received: " + BT_NAME);
+#endif
   } else if (memcmp(&receivedString[0], "C1", 2) == 0) {
+#if defined DEBUG
     //DBG("connection succeeded");
+#endif
     BTState = Connected;
   } else if (memcmp(&receivedString[0], "C0", 2) == 0) {
+#if defined DEBUG
     // DBG("no connection");
+#endif
     BTState = Disconnected;
   } else if (memcmp(&receivedString[0], "MB", 2) == 0) {
+#if defined DEBUG
     //DBG("Play");
+#endif
     MusicState = Playing;
   } else if (memcmp(&receivedString[0], "MA", 2) == 0) {
+#if defined DEBUG
     //DBG("Idle");
+#endif
     MusicState = Idle;
   } else if (memcmp(&receivedString[0], "M0", 2) == 0) {
+#if defined DEBUG
     //DBG("disconnect");
+#endif
     BTState = Disconnected;
   } else if (memcmp(&receivedString[0], "M1", 2) == 0) {
+#if defined DEBUG
     //DBG("connection");
+#endif
     BTState = Connected;
   } else if (memcmp(&receivedString[0], "M2", 2) == 0) {
+#if defined DEBUG
     //DBG("Caller");
+#endif
     BTState = CallInProgress;
   } else if (memcmp(&receivedString[0], "M3", 2) == 0) {
+#if defined DEBUG
     //DBG("Outgoing");
+#endif
     BTState = OutgoingCall;
   } else if (memcmp(&receivedString[0], "M4", 2) == 0) {
+#if defined DEBUG
     //DBG("Calling");
+#endif
     BTState = IncomingCall;
   } else if (memcmp(&receivedString[0], "MFM", 3) == 0) {
+#if defined DEBUG
    // DBG("Current preset: ");
+#endif
     CurrentPreset = receivedString.substring(3).toInt();
   } else if (memcmp(&receivedString[0], "MUSICPLYFINISH", 14) == 0 ) {
     MusicState = Idle;	
@@ -379,18 +489,24 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 }
 
 String BK3254::returnCallerID(String receivedString) {
+#if defined DEBUG
   //DBG("Calling: " + receivedString.substring(4, (receivedString.length() - 2)) + "\n");
+#endif
   return receivedString.substring(4, (receivedString.length() - 2)); //start at 4 cose: IR-"+123456789" or PR-"+123456789" and one before end to remove " and \0
 }
 
 String BK3254::returnBtModuleName(String receivedString) {
+#if defined DEBUG
   //DBG("Bluetooth module name: " + receivedString.substring(4) + "\n");
+#endif
   return receivedString.substring(4);
 }
 
 uint16_t BK3254::returnFreq(String receivedString) {
   //FM_FQ=893
+#if defined DEBUG
   //DBG(receivedString);
+#endif
   return (uint16_t)(receivedString.toInt());
 }
 
@@ -496,10 +612,14 @@ uint8_t BK3254::reboot() {
 uint8_t BK3254::changePin(String newPin) {//this command did not work on my module ...
   BK3254::getNextEventFromBT();
   if (newPin.length() - 2 > 16) { //count for termination char
+#if defined DEBUG
     DBG("Pin to long, max 16chars");
+#endif
     return false;
   } else {
+#if defined DEBUG
     DBG("Writing pin\n");
+#endif
     BK3254::sendCOMData(BK3254_CHANGE_PIN + newPin);
   }
   return BK3254::getNextEventFromBT();
@@ -511,10 +631,14 @@ uint8_t BK3254::changePin(String newPin) {//this command did not work on my modu
 uint8_t BK3254::changeName(String newName) {//this command did not work on my module ...
   BK3254::getNextEventFromBT();
   if (newName.length() - 2 > 16) { //count for termination char
+#if defined DEBUG
     DBG("name to long, max 16chars");
+#endif
     return false;
   } else {
+#if defined DEBUG
     DBG("Writing name\n");
+#endif
     BK3254::sendCOMData(BK3254_CHANGE_NAME + newName);
   }
   return BK3254::getNextEventFromBT();
