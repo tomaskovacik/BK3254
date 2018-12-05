@@ -17,9 +17,9 @@
 #define BK3254_h
 #include <Arduino.h>
 
-#define USE_SW_SERIAL 1
+//#define USE_SW_SERIAL
 
-//#define DEBUG 1
+//#define DEBUG
 
 // UART COMMANDS
 // works only on v1.2
@@ -233,8 +233,10 @@ class BK3254
     uint8_t autoPlayOff();
     uint8_t getAutoPlay();
 
-    //??
+    //support functions
+    String decodeState(uint16_t state);
   private:
+   // String receivedString = "";
     uint8_t _reset;
     uint8_t decodeReceivedString(String receivedString);
     uint8_t decodeReceivedStringOld(String receivedString);

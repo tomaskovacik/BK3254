@@ -16,11 +16,13 @@ uint16_t CallState;
 uint16_t MusicState;
 uint16_t PowerState;
 uint16_t InputSelected;
-uint16_t MusicMode;
+uint16_t ModeOfPlay;
 uint16_t CurrentFrequency;
 uint8_t CurrentPreset;
 uint16_t currentVolume;
 String CallerID = "";
+uint16_t time=0;
+uint16_t timeout=500;
 
 SoftwareSerial swSerial(7, 6); //rxPin, txPin, inverse_logic
 
@@ -29,12 +31,18 @@ BK3254 BT(&swSerial, resetBTpin);
 #define INITVOLUME "1"
 
 void getInitStates() {
-  while (BT.getName() != 1);
-  while (BT.getConnectionStatus() != 1);
-  while (BT.getPinCode() != 1);
-  while (BT.getAddress() != 1);
-  while (BT.getMusicStatus() != 1);
-  while (BT.getHFPStatus() != 1);
+  time=millis();
+  while (BT.getName() != 1 && time - millis() < timeout);
+  time=millis();
+  while (BT.getConnectionStatus() != 1 && time - millis() < timeout);
+  time=millis();
+  while (BT.getPinCode() != 1 && time - millis() < timeout);
+  time=millis();
+  while (BT.getAddress() != 1 && time - millis() < timeout);
+  time=millis();
+  while (BT.getMusicStatus() != 1 && time - millis() < timeout);
+  time=millis();
+  while (BT.getHFPStatus() != 1 && time - millis() < timeout);
 }
 
 void setup() {
@@ -44,7 +52,8 @@ void setup() {
   delay(1000);
   getInitStates();
   delay(100);
-  while (BT.volumeSet(INITVOLUME) != 1);
+  time=millis();
+  while (BT.volumeSet(INITVOLUME) != 1 && time - millis() < timeout);
 }
 
 void printInputSelected();
@@ -52,9 +61,9 @@ void printMusicState();
 void printBTstate();
 void printMusicState();
 void printPowerState();
-void printMusicMode();
+void printModeOfPlay();
 void printAllInfo();
-void printCurrentMusicMode();
+void printCurrentModeOfPlay();
 void printCallState();
 
 void loop() {
@@ -306,7 +315,7 @@ void loop() {
             c = Serial.read();
             str += c;
           }
-          BT.changeName(str);
+          if (BT.changeName(str)) Serial.println(F("BT name changed, reboot required to take efect."));
         }
         break;
       case 'U':
@@ -399,9 +408,9 @@ void loop() {
     InputSelected = BT.InputSelected;
   }
 
-  if (MusicMode != BT.MusicMode) {
-    printMusicMode();
-    MusicMode = BT.MusicMode;
+  if (ModeOfPlay != BT.ModeOfPlay) {
+    printModeOfPlay();
+    ModeOfPlay = BT.ModeOfPlay;
   }
 
   if (CurrentFrequency != BT.CurrentFrequency) {
@@ -418,12 +427,13 @@ void loop() {
     printCurrentVolume();
     currentVolume = BT.currentVolume;
   }
+  delay(100);//just in case
 }
 
 void printAllInfo() {
-  Serial.println(BT.BT_NAME);
-  Serial.print("Pin: "); Serial.println(BT.BT_PIN);
-  Serial.print("BT address: "); Serial.println(BT.BT_ADDR);
+  Serial.println("BT name: " + BT.BT_NAME);
+  Serial.println("Pin: " + BT.BT_PIN);
+  Serial.println("BT address: " + BT.BT_ADDR);
   printInputSelected();
   printMusicState();
   printBTstate();
@@ -431,7 +441,7 @@ void printAllInfo() {
   printCurrentFreqency();
   printCurrentPreset();
   printCurrentVolume();
-  printCurrentMusicMode();
+  printCurrentModeOfPlay();
 }
 
 void printCallState() {
@@ -453,9 +463,9 @@ void printCallState() {
     Serial.println(BT.CallerID);
 }
 
-void printCurrentMusicMode() {
+void printCurrentModeOfPlay() {
   Serial.print(F("Current mode: "));
-  Serial.println(BT.MusicMode);
+  Serial.println(BT.decodeState(BT.ModeOfPlay));
 }
 
 void printCurrentVolume() {
@@ -474,8 +484,8 @@ void printCurrentPreset() {
   Serial.println(BT.CurrentPreset);
 }
 
-void printMusicMode() {
-  switch (BT.MusicMode) {
+void printModeOfPlay() {
+  switch (BT.ModeOfPlay) {
     case (BT.RepeatAll):
       Serial.println(F("Repeat all"));
       break;
