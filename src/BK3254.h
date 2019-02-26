@@ -17,7 +17,7 @@
 #define BK3254_h
 #include <Arduino.h>
 
-//#define USE_SW_SERIAL
+#define USE_SW_SERIAL
 
 #define DEBUG
 
