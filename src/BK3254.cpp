@@ -328,7 +328,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     PowerState = On;
   } else if (memcmp(&receivedString[0], "PR-", 3) == 0) {
 #if defined DEBUG
-    DBG("outgoing call\n");
+    DBG(F("Outgoing call\n"));
 #endif
     InputSelected = BT;
     BTState = Connected;

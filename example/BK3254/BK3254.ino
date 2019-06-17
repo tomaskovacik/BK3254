@@ -431,9 +431,9 @@ void loop() {
 }
 
 void printAllInfo() {
-  Serial.println("BT name: " + BT.BT_NAME);
-  Serial.println("Pin: " + BT.BT_PIN);
-  Serial.println("BT address: " + BT.BT_ADDR);
+  Serial.print(F("BT name: "));Serial.println(BT.BT_NAME);
+  Serial.print(F("Pin: "));Serial.println(BT.BT_PIN);
+  Serial.print(F("BT address: "));Serial.println(BT.BT_ADDR);
   printInputSelected();
   printMusicState();
   printBTstate();
@@ -447,16 +447,16 @@ void printAllInfo() {
 void printCallState() {
   switch (CallState) {
     case BT.IncomingCall:
-      Serial.print("Incomming call: ");
+      Serial.print(F("Incomming call: "));
       break;
     case BT.OutgoingCall:
-      Serial.print("Outgoing call: ");
+      Serial.print(F("Outgoing call: "));
       break;
     case BT.CallInProgress:
-      Serial.print("Calling: ");
+      Serial.print(F("Calling: "));
       break;
     case BT.Idle:
-      Serial.print("Call ended.");
+      Serial.print(F("Call ended."));
       break;
   }
   if (CallState != BT.Idle)
@@ -521,7 +521,7 @@ void printMusicState() {
         BT.cardUsbGetSongsCount(); //get number of song on card or USB and currently played song:
         if (BT.InputSelected == BT.SD) BT.cardGetCurrentPlayingSongNumber();
         if (BT.InputSelected == BT.USB) BT.usbGetCurrentPlayingSongNumber();
-        Serial.print("Playing song "); Serial.print(BT.CurrentlyPlayingSong); Serial.print(" of "); Serial.print(BT.NumberOfSongs); Serial.println(".");
+        Serial.print(F("Playing song ")); Serial.print(BT.CurrentlyPlayingSong); Serial.print(F(" of ")); Serial.print(BT.NumberOfSongs); Serial.println(".");
       }
       break;
     case (BT.Idle):
@@ -554,10 +554,10 @@ void printInputSelected() {
 void printPowerState() {
   switch (PowerState) {
     case BT.On:
-      Serial.println("Module On");
+      Serial.println(F("Module On"));
       break;
     case BT.Off:
-      Serial.println("Module Off");
+      Serial.println(F("Module Off"));
       break;
   }
 }
