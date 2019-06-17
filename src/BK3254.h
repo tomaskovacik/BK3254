@@ -19,7 +19,7 @@
 
 #define USE_SW_SERIAL
 
-#define DEBUG
+//#define DEBUG
 
 // UART COMMANDS
 // works only on v1.2
@@ -240,7 +240,9 @@ class BK3254
     uint8_t _reset;
     uint8_t decodeReceivedString(String receivedString);
     uint8_t decodeReceivedStringOld(String receivedString);
-    void DBG(String text);
+#if defined DEBUG
+	void DBG(String text);
+#endif
     void resetHigh();
     void resetLow();
     String returnCallerID(String receivedString);
