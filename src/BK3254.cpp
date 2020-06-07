@@ -90,13 +90,24 @@ uint8_t BK3254::getNextEventFromBT() {
   return 0;
 }
 
+uint8_t BK3254::checkResponce(void){
+  uint8_t timeout=500;//500ms -- datasheet did not stated any timeout for "OK" responce, so I give him 500ms
+  while (!getNextEventFromBT() && timeout > 0)
+  {
+    timeout--;
+    delay(1); // wait 1milisecond
+  }
+  if (!timeout) return false;
+  return true;
+}
+
 uint8_t BK3254::sendData(String cmd) {
   String Command = "AT+" + cmd + "\r\n";
 #if defined DEBUG
   DBG(F("sending "));DBG(Command);
 #endif
   btSerial -> print(Command);
-  return BK3254::getNextEventFromBT();
+  return checkResponce();
 }
 
 uint8_t BK3254::sendCOMData(String cmd) { 
@@ -106,18 +117,17 @@ uint8_t BK3254::sendCOMData(String cmd) {
   DBG(F("sending "));DBG(Command);
 #endif
   btSerial -> print(Command);
-  return BK3254::getNextEventFromBT();
+  return checkResponce();
 }
 
 uint8_t BK3254::sendBTData(String cmd) {
-
   BK3254::getNextEventFromBT();
   String Command = "BT+" + cmd + "\r\n";
 #if defined DEBUG
   DBG(F("sending "));DBG(Command);
 #endif
   btSerial -> print(Command);
-  return BK3254::getNextEventFromBT();
+  return checkResponce();
 }
 
 uint8_t BK3254::sendFMData(String cmd) {
@@ -128,7 +138,7 @@ uint8_t BK3254::sendFMData(String cmd) {
 #endif
   delay(100);
   btSerial -> print(Command);
-  return BK3254::getNextEventFromBT();
+  return checkResponce();
 }
 
 /*
@@ -822,69 +832,26 @@ uint8_t BK3254::getHFPStatus() { //BK3254_GET_HFP_STATUS "AT+MY" //Bluetooth inq
 
 String BK3254::decodeState(uint16_t state){
     switch (state){
-    case Playing:
-        return F("Playing");
-        break;
-    case Idle:
-        return F("Idle");
-        break;
-   case IncomingCall:
-        return F("IncomingCall");
-        break;
-   case OutgoingCall:
-        return F("OutgoingCall");
-        break;
-   case CallInProgress:
-        return F("CallInProgress");
-        break;
-   case Connected:
-        return F("Connected");
-        break;
-   case Disconnected:
-        return F("Disconnected");
-        break;
-   case On:
-        return F("On");
-        break;
-   case Off:
-        return F("Off");
-        break;
-   case Pairing:
-        return F("Pairing");
-        break;
-   case ShutdownInProgress:
-        return F("ShutdownInProgress");
-        break;
-   case BT:
-        return F("BT");
-        break;
-   case AUX:
-        return F("AUX");
-        break;
-   case USB:
-        return F("USB");
-        break;
-   case SD:
-        return F("SD");
-        break;
-   case Connecting:
-        return F("Connecting");
-        break;
-   case Busy:
-        return F("Busy");
-        break;
-   case RepeatAll:
-        return F("RepeatAll");
-    break;
-    case RepeatOne:
-        return F("RepeatOne");
-    break;
-    case RepeatNone:
-        return F("RepeatNone");
-    break;
-    case FM:
-        return F("FM");
-    break;
+	case Playing:			return F("Playing");
+	case Idle:			return F("Idle");
+	case IncomingCall:		return F("IncomingCall");
+	case OutgoingCall:		return F("OutgoingCall");
+	case CallInProgress: 		return F("CallInProgress");
+	case Connected:      		return F("Connected");
+	case Disconnected:   		return F("Disconnected");
+	case On:			return F("On");
+	case Off:			return F("Off");
+	case Pairing:            	return F("Pairing");
+	case ShutdownInProgress: 	return F("ShutdownInProgress");
+	case BT:			return F("BT");
+	case AUX:			return F("AUX");
+	case USB:			return F("USB");
+	case SD:			return F("SD");
+	case Connecting:		return F("Connecting");
+	case Busy:			return F("Busy");
+	case RepeatAll:			return F("RepeatAll");
+	case RepeatOne:			return F("RepeatOne");
+	case RepeatNone:		return F("RepeatNone");
+	case FM:			return F("FM");
     }
-
 }

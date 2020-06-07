@@ -237,6 +237,7 @@ class BK3254
     String decodeState(uint16_t state);
   private:
    // String receivedString = "";
+    uint8_t checkResponce(void);
     uint8_t _reset;
     uint8_t decodeReceivedString(String receivedString);
     uint8_t decodeReceivedStringOld(String receivedString);
