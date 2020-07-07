@@ -10,12 +10,6 @@
 #include <Arduino.h>
 
 #if defined(USE_SW_SERIAL)
-#include <SoftwareSerial.h>
-#endif
-
-
-
-#if defined(USE_SW_SERIAL)
 #if ARDUINO >= 100
 BK3254::BK3254(SoftwareSerial *ser, uint8_t resetPin)
 #else
@@ -91,7 +85,7 @@ uint8_t BK3254::getNextEventFromBT() {
 }
 
 uint8_t BK3254::checkResponce(void){
-  uint8_t timeout=500;//500ms -- datasheet did not stated any timeout for "OK" responce, so I give him 500ms
+  uint16_t timeout=500;//500ms -- datasheet did not stated any timeout for "OK" responce, so I give him 500ms
   while (!getNextEventFromBT() && timeout > 0)
   {
     timeout--;
