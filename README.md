@@ -8,6 +8,8 @@ take care what module you buy, where are version which did not have support for 
 
 <a href="https://www.aliexpress.com/item/BK3254-Bluetooth-4-1-stereo-audio-module-support-FM-radio-TF-card-U-disk-infrared-remote/32811949610.html">This one</a> has only BT and AUX funtionality, it make poping noise, then module is switching between internaly generated sounds and BT or while swtching from BT to AUX, probably need to use mute pin for muting poweramp, buttons areon ADC, in this PDF:  https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/F-6888_BK3254_datasheet.pdf. I need to state that module which I receive hase these markings: F-6888, V1.2 2016-8-6, so this is not indication of anything!, shame :(
 
+Here is wiki page with some modules I tested from ali: https://github.com/tomaskovacik/BK3254/wiki/modules-from-ali
+
 
 
 # Library for BK3254 based bluetooth audio module (F-6888)
