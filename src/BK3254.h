@@ -17,9 +17,9 @@
 #define BK3254_h
 #include <Arduino.h>
 
-#define USE_SW_SERIAL
+//#define USE_SW_SERIAL
 
-//#define DEBUG
+#define DEBUG
 
 // UART COMMANDS
 // works only on v1.2
@@ -36,7 +36,7 @@
 #define BK3254_REBOOT "REBOOT"
 #define BK3254_AUTOPLAYON "MP3AUTOPLYON" //
 #define BK3254_AUTOPLAYOFF "MP3AUTOPLYOFF" //
-#define BK3254_GET_AUTOPLAY_STATE "MP3AUTOPLY" //
+#define BK3254_GET_AUTOPLAY_STATE "MMP3AUTOPLY" //
 //probably work only with V1.3 based on this: https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/BK3254_V1.3_HYT.zh-CN.en.pdf
 // on 1.2 firmware this only disconnect BT
 #define BK3254_CHANGE_PIN "SPIN+"
@@ -91,6 +91,7 @@
 #define BK3254_GET_CONNECTION_STATUS "MO" //Bluetooth connection status inquiry   connection succeeded: C1\r\n / no connection: C0\r\n
 #define BK3254_GET_MUSIC_STATUS "MV" //Bluetooth playback status inquiry   Play: MB\r\n / time out: MA\r\n / disconnect: M0\r\n
 #define BK3254_GET_HFP_STATUS "MY" //Bluetooth inquiry HFP status  disconnect: M0\r\n / connection: M1\r\n / Caller: M2\r\n / Outgoing: M3\r\n / calling: M4\r\n
+#define BK3254_GET_SW_VERSION "MQ" //GET SW VERSION
 
 #define fmNextTrack musicNextTrack
 #define fmPreviousTrack musicPreviousTrack
@@ -214,6 +215,7 @@ class BK3254
     uint8_t getConnectionStatus();
     uint8_t getMusicStatus();
     uint8_t getHFPStatus();
+    uint8_t getSWVersion();
     uint8_t changeName(String newName);
     uint8_t changePin(String newPin);
 
