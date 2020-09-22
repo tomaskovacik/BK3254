@@ -31,7 +31,7 @@ BK3254|computer(USB2serial for example)
    RX  |  TX
    TX  |  RX
   GND  |  GND
- VBAT  |  via diode to 5V
+ VBAT  |  via diode to 5V (input for li-ion batery so 4.2V max! )
 
 ## arduino using software serial (UNO, nano..)
 
