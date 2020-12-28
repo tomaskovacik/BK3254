@@ -66,7 +66,7 @@ void BK3254::resetModule() {
 uint8_t BK3254::getNextEventFromBT() {
   char c;
   String receivedString;
-  delay(200);//delay needed to fillup buffers otherwise this will return false
+  //delay(200);//delay needed to fillup buffers otherwise this will return false
   while (btSerial -> available() > 0 && c != '\n') { //read serial buffer until \n
     c = (btSerial -> read());
     if (c == 0xA) {
