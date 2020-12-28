@@ -17,12 +17,35 @@
 #define BK3254_h
 #include <Arduino.h>
 
-//#define USE_SW_SERIAL
+#define USE_SW_SERIAL
 
 #define DEBUG
+//#define BK3266
 
 // UART COMMANDS
-// works only on v1.2
+#ifdef BK3266
+// works with  BK3266
+#define BK3266_EQ_STATUS "MEQ" //Inquire EQ 
+#define BK3266_QE_NORMAL "NORMAL"
+#define BK3266_QE_BOOST "BOOST"
+#define BK3266_QE_TREBLE "TREBLE"
+#define BK3266_QE_POP "POP"
+#define BK3266_QE_ROCK "ROCK"
+#define BK3266_QE_CLASIC "CLASSIC"
+#define BK3266_QE_JAZZ "JAZZ"
+#define BK3266_QE_DANCE "DANCE"
+#define BK3266_QE_RAP "RAP"
+#define BK3266_SET_EQ "SETEQ" //EQ Set up COM+SETEQNORMAL\r\n; Effective immediately
+#define BK3266_SONGTIME_ON "OT" //switch return string for GN command MUSIC:001500010328\n or correct: xxxxxxxx\n, returned after calling GN command
+#define BK3266_SONGNAME_ON "CT" // switch to song name, to be returned with GN command
+#define BK3266_GET_SONG_NAME "GN" //only 8chars are returned
+#endif
+
+// work only with firmware version 1.4
+#define BK3254_SET_TONE_VOLUME "SETTS" //Setting the tone volume;COM + SETTSx \ r \ n;correct: TSx \ n;error: ERR \ n;
+#define BK3254_GET_TONE_VOLUME "MTS" //Query the current tone volume; COM + MTS \ r \ n; correct: TSx \ n; error: ERR \ n
+
+// works only on v1.2 
 #define BK3254_CHANGE_NAME "SNAME+" //change name
 #define BK3254_VOICES_ON "TONEON"
 #define BK3254_VOICES_OFF "TONEOFF"
@@ -49,13 +72,20 @@
 #define BK3254_CALL_REJECT "CJ" //To reject a call  
 #define BK3254_CALL_HANGUP "CE" //Hang up the phone   
 #define BK3254_CALL_REDIAL "CR" //Last number redial  
-#define BK3254_MUSIC_TOGGLE_PLAY_PAUSE "PP" //Music Play / Pause  
+#define BK3254_MUSIC_TOGGLE_PLAY_PAUSE "PP" //Music Play / Pause
+#define BK3254_MUSIC_PLAY "PA" //Music Play
+#define BK3254_MUSIC_PAUSE "PU" //Music Pause
 #define BK3254_MUSIC_NEXT_TRACK "PN" //next track/ FM next station   
 #define BK3254_MUSIC_PREVIOUS_TRACK "PV" //previous piece/ FM On one   
 #define BK3254_VOLUME_UP "VP" //Volume Up   
 #define BK3254_VOLUME_DOWN "VD" //Volume down   
+#ifndef BK3266
 #define BK3254_VOLUME_SET "VOL" //VOL+x: 0x00 - 0xAF  Set the volume  correct: VOLx\n / error: ERR\n
 #define BK3254_VOLUME_GET_CURRENT "MVOL" //Query current volume  correct: VOLx\n (x:0-15) / error: ERR\n
+#else
+#define BK3254_VOLUME_SET "V" //+x: 0 - 16  Set the volume  com+correct: COM_VOLx\n / error: ERR\n
+#define BK3254_VOLUME_GET_CURRENT "GV" //Query current volume  correct: VOLx\n (x:0-16) / error: ERR\n
+#endif
 #define BK3254_SHUTDOWN "PWD" //Shutdown  
 #define BK3254_STANDBY "PWDS" //Soft-Off  
 #define BK3254_POWERUP "PWOS" //Soft Power   ???
@@ -66,10 +96,17 @@
 #define BK3254_INPUT_FM "MFM" //FM Mode (if available)  
 #define BK3254_INPUT_USB "MUD" //USB Disk mode (if available)  
 #define BK3254_INPUT_GET_CURRENT "IQ" //Query the current mode  
+#ifndef BK3266
 #define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ALL "MPM0" //Repeat All Tracks (TF/USB disk mode)  correct: PLAY_ALL\n / error: ERR\n; from firmware 1.4: correct: PLAY_M0 \ n
 #define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ONE "MPM1" //Single loop (TF/USB disk mode)  correct: PLAY_ONE\n / error: ERR\n; rom firmware 1.4: correct: PLAY_M1 \ n
 #define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_NONE "MPM2" //No single loop (TF/USB disk mode)  correct: PLAY_M2\n / error: ERR\n
 #define BK3254_MUSIC_PLAYBACK_MODE_GET_CURRENT "MPMC" //The current inquiry MP3 Play Mode (TF/USB disk mode)  correct: PLAY_ALL\n / PLAY_ONE\n
+#else
+#define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ALL "SMA" //Repeat All Tracks (TF/USB disk mode) COM+SMA\r\n correct: COM_SMA\n / error: ERR\n; from firmware 1.4: correct: PLAY_M0 \ n
+#define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_ONE "SMO" //Single loop (TF/USB disk mode) COM+SMO\r\n correct: COM_SMO\n / error: ERR\n; rom firmware 1.4: correct: PLAY_M1 \ n
+#define BK3254_MUSIC_PLAYBACK_MODE_REPEAT_NONE "SMNO" //No single loop (TF/USB disk mode) COM+SMNO\r\n correct: COM_SMNO\n / error: ERR\n
+#define BK3254_MUSIC_PLAYBACK_MODE_GET_CURRENT "GSM" //The current inquiry MP3 Play Mode (TF/USB disk mode) COM+SMR\r\n correct: COM_SMA\n / COM_SMO / COM_SMNO\n
+#endif
 #define BK3254_MUSIC_PLAY_SONG_NUMBER "SMP" //SMP+XXXX, Play selections (TF/USB disk mode)  XXXX: 0001-9999, 0001 Represents the 1 first
 #define BK3254_TF_GET_SONG_NUMBER "MRMP3" //Query currently playing MP3 Song number   correct: music_mun = x\n , x: 1-9999 / error: ERR\n ???
 #define BK3254_TF_USB_GET_NUMBER_OF_SONGS "MMMP3" //Query current mode MP3 The number of songs (TF/USB disk mode)   correct: MMMPx\n,x: 1-1999 / error: ERR\n
@@ -84,10 +121,15 @@
 #define BK3254_FM_GET_FREQ_OF_PRESET "MFFM" //MFFM+XX, Inquire FM of xx No. A frequency corresponding to (FM Mode)   correct: FM_FQ = xxx\n, error: ERR\n
 
 //Query / feedback commands
-
+#ifdef BK3266
+#define BK3254_GET_ADDRESS "GAD" //Queries Bluetooth address ;BT+GAD\r\n;  AD_191919191919\r\n
+#define BK3254_GET_PIN_CODE "GNM" //PIN Code query ;BT+GNM\r\n; PN_0000\r\n
+#define BK3254_GET_NAME "GPI" //Bluetooth name query ;BT+GPI\r\n; NA_BK3254\r\n
+#else
 #define BK3254_GET_ADDRESS "MR" //Queries Bluetooth address   AD: 191919191919\r\n
 #define BK3254_GET_PIN_CODE "MP" //PIN Code query  PN: 0000\r\n , droped in firmware V1.4
 #define BK3254_GET_NAME "MN" //Bluetooth name query  NA: BK3254\r\n
+#endif
 #define BK3254_GET_CONNECTION_STATUS "MO" //Bluetooth connection status inquiry   connection succeeded: C1\r\n / no connection: C0\r\n
 #define BK3254_GET_MUSIC_STATUS "MV" //Bluetooth playback status inquiry   Play: MB\r\n / time out: MA\r\n / disconnect: M0\r\n
 #define BK3254_GET_HFP_STATUS "MY" //Bluetooth inquiry HFP status  disconnect: M0\r\n / connection: M1\r\n / Caller: M2\r\n / Outgoing: M3\r\n / calling: M4\r\n
@@ -131,8 +173,25 @@ class BK3254
       RepeatAll,             //0x11
       RepeatOne,             //0x12
       RepeatNone,             //0x13
-      FM                   //0x14
+      FM,                   //0x14
+      Shuffle			//0x15
     };
+
+#ifdef BK3266
+    enum eq{
+	NORMAL, //1
+	BOOST,//2
+	TREBLE,//3
+	POP,//4
+	ROCK,//5
+	CLASSIC,//6
+	JAZZ,//7
+	DANCE,//8
+	RAP//9
+	};
+
+    uint8_t eqState=NORMAL;
+#endif
 
     uint16_t BTState = Disconnected;
     uint16_t CallState = Idle;
@@ -177,6 +236,8 @@ class BK3254
     uint8_t callHangUp();
     uint8_t callRedial();
     uint8_t musicTogglePlayPause();
+    uint8_t musicPlay();
+    uint8_t musicPause();
     uint8_t musicNextTrack();
     uint8_t musicPreviousTrack();
     uint8_t volumeUp();
@@ -234,6 +295,15 @@ class BK3254
     uint8_t autoPlayOn();
     uint8_t autoPlayOff();
     uint8_t getAutoPlay();
+#ifdef BK3266
+// works with  BK3266
+	uint8_t getEqualizerStatus(); //#define BK3266_EQ_STATUS "MEQ" //Inquire EQ 
+	uint8_t setEqualizerStatus(uint8_t eq = NORMAL); //#define BK3266_SET_EQ "SETEQ" //EQ Set up COM+SETEQNORMAL\r\n; Effective immediately
+	uint8_t getSongTime(); //#define BK3266_SONGTIME_ON "OT" + GN ;switch return string for GN command MUSIC:001500010328\n or correct: xxxxxxxx\n
+	uint8_t getSongName(); //#define BK3266_SONGNAME_ON "CT" + GN ; #define BK3266_GET_SONG_NAME "GN" //only 8chars are returned
+	String decodeEqualizer(uint8_t eq);
+#endif
+
 
     //support functions
     String decodeState(uint16_t state);

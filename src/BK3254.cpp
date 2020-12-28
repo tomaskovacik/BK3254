@@ -92,9 +92,9 @@ uint8_t BK3254::checkResponce(void){
     delay(1); // wait 1milisecond
   }
   if (timeout == 0) {
-	  Serial.println(timeout);
-	  return false;
-	}	  
+        Serial.println(timeout);
+        return false;
+      }
   return true;
 }
 
@@ -187,6 +187,9 @@ uint8_t BK3254::sendFMData(String cmd) {
   Outgoing: M3\r\n
   calling: M4\r\n
   IR-"+123456789"
+  BK3266 support:
+
+  BT_WP Currently in Bluetooth mode, bluetooth are in pairing state
 */
 uint8_t BK3254::decodeReceivedString(String receivedString) {
 
@@ -360,21 +363,38 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     DBG(F("Bluetooth turned on\n"));
 #endif
     PowerState = On;
+#ifndef BK3266
   } else if (memcmp(&receivedString[0], "PLAY_ALL", 8) == 0 || memcmp(&receivedString[0], "PLAY_M0", 7) == 0) {
+#else
+  } else if (memcmp(&receivedString[0], "COM_SMA", 7) == 0) {
+#endif
 #if defined DEBUG
     DBG(F("Repeat All Tracks (TF/SDcard Mode)\n"));
 #endif
     ModeOfPlay = RepeatAll;
+#ifndef BK3266
   } else if (memcmp(&receivedString[0], "PLAY_ONE", 8) == 0 || memcmp(&receivedString[0], "PLAY_M1", 7) == 0) {
+#else
+  } else if (memcmp(&receivedString[0], "COM_SMO", 7) == 0) {
+#endif
 #if defined DEBUG
     DBG(F("Repeat One Track (TF/SDcard Mode)\n"));
 #endif
     ModeOfPlay = RepeatOne;
+#ifndef BK3266
   } else if (memcmp(&receivedString[0], "PLAY_M2", 7) == 0) {
+#else
+  } else if (memcmp(&receivedString[0], "COM_SMNO", 8) == 0) {
+#endif
 #if defined DEBUG
     DBG(F("Repeat None (TF/SDcard Mode)\n"));
 #endif
     ModeOfPlay = RepeatNone;
+  } else if (memcmp(&receivedString[0], "COM_SMR", 7) == 0) {
+#if defined DEBUG
+    DBG(F("Shuffle (TF/SDcard Mode)\n"));
+#endif
+    ModeOfPlay = Shuffle;
   } else if (memcmp(&receivedString[0], "SD_PA", 5) == 0) {
 #if defined DEBUG
     DBG(F("SD Card playing status\n"));
@@ -429,22 +449,40 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     InputSelected = USB;
     BTState = Disconnected;
     MusicState = Idle;
+#ifdef BK3266
+  } else if (memcmp(&receivedString[0], "COM_V", 5) == 0) {
+    currentVolume = receivedString.substring(5).toInt();
+#else
   } else if (memcmp(&receivedString[0], "VOL", 3) == 0) {
     currentVolume = receivedString.substring(3).toInt();
+#endif
 #if defined DEBUG
     DBG(F("The current volume level: "));DBG((String)currentVolume + "\n");
 #endif
+#ifdef BK3266
+  } else if (memcmp(&receivedString[0], "AD_", 3) == 0) {
+#else
   } else if (memcmp(&receivedString[0], "AD:", 3) == 0) {
-    BT_ADDR = receivedString.substring(5);
+#endif
+    BT_ADDR = receivedString.substring(3);
 #if defined DEBUG
     DBG(F("BT ADDRESS: "));DBG(BT_ADDR + "\n");
 #endif
+#ifdef BK3266
+  } else if (memcmp(&receivedString[0], " PN_", 4) == 0) {
+    BT_PIN = receivedString.substring(4);
+#else
   } else if (memcmp(&receivedString[0], " PN: ", 5) == 0) {
     BT_PIN = receivedString.substring(5);
+#endif
 #if defined DEBUG
     DBG(F("Pin received:"));DBG(BT_PIN + "\n");
 #endif
+#ifdef BK3266
+  } else if (memcmp(&receivedString[0], "NA_", 3) == 0) {
+#else
   } else if (memcmp(&receivedString[0], "NA: ", 4) == 0) {
+#endif
     BT_NAME = BK3254::returnBtModuleName(receivedString);
 #if defined DEBUG
     DBG(F("BT name received: "));DBG(BT_NAME + "\n");
@@ -500,7 +538,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 #endif
     CurrentPreset = receivedString.substring(3).toInt();
 #if defined DEBUG
-   DBG(CurrentPreset);DBG(F("\n"));
+   DBG(String(CurrentPreset));DBG(F("\n"));
 #endif
 
   } else if (memcmp(&receivedString[0], "MUSICPLYFINISH", 14) == 0 ) {
@@ -509,6 +547,54 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
    DBG(F("MUSICPLYFINISH\n"));
 #endif
   }
+#ifdef BK3266
+  else if (memcmp(&receivedString[0], "NORMAL", 6) == 0 ) {
+    eqState = NORMAL;
+#if defined DEBUG
+   DBG(F("EQ: NORMAL\n"));
+#endif
+  } else if (memcmp(&receivedString[0], "BOOST", 6) == 0 ) {
+    eqState = BOOST;
+#if defined DEBUG
+   DBG(F("EQ: BOOST\n"));
+#endif
+  } else if (memcmp(&receivedString[0], "TREBLE", 6) == 0 ) {
+    eqState = TREBLE;
+#if defined DEBUG
+   DBG(F("EQ: TREBLE\n"));
+#endif
+  } else if (memcmp(&receivedString[0], "POP", 3) == 0 ) { 
+    eqState = POP;
+#if defined DEBUG
+   DBG(F("EQ: POP\n"));
+#endif
+  } else if (memcmp(&receivedString[0], "ROCK", 4) == 0 ) { 
+    eqState = ROCK;
+#if defined DEBUG
+   DBG(F("EQ: ROCK\n"));
+#endif
+  } else if (memcmp(&receivedString[0], "CLASSIC", 7) == 0 ) { 
+    eqState = CLASSIC;
+#if defined DEBUG
+   DBG(F("EQ: CLASSIC\n"));
+#endif
+  } else if (memcmp(&receivedString[0], "JAZZ", 4) == 0 ) { 
+    eqState = JAZZ;
+#if defined DEBUG
+   DBG(F("EQ: JAZZ\n"));
+#endif
+  } else if (memcmp(&receivedString[0], "DANCE", 5) == 0 ) { 
+    eqState = DANCE;
+#if defined DEBUG
+   DBG(F("EQ: DANCE\n"));
+#endif
+  } else if (memcmp(&receivedString[0], "R&P", 3) == 0 ) { 
+    eqState = RAP;
+#if defined DEBUG
+   DBG(F("EQ: RAP\n"));
+#endif
+  }
+#endif
   receivedString="";
 #if defined DEBUG
    DBG(F("Return true\n"));
@@ -674,6 +760,14 @@ uint8_t BK3254::musicTogglePlayPause() { //BK3254_MUSIC_TOGGLE_PLAY_PAUSE "COM+P
   return BK3254::sendCOMData(BK3254_MUSIC_TOGGLE_PLAY_PAUSE);
 }
 
+uint8_t BK3254::musicPlay() { //BK3254_MUSIC_PLAY "COM+PA" //Music Play
+  return BK3254::sendCOMData(BK3254_MUSIC_PLAY);
+}
+
+uint8_t BK3254::musicPause() { //BK3254_MUSIC_PAUSE "COM+PU" //Music Pause
+  return BK3254::sendCOMData(BK3254_MUSIC_PAUSE);
+}
+
 uint8_t BK3254::musicNextTrack() { //BK3254_MUSIC_NEXT_TRACK "COM+PN" //next track/ FM next station
   return BK3254::sendCOMData(BK3254_MUSIC_NEXT_TRACK);
 }
@@ -826,7 +920,43 @@ uint8_t BK3254::getMusicStatus() { //BK3254_MUSIC_GET_STATUS "AT+MV" //Bluetooth
 uint8_t BK3254::getHFPStatus() { //BK3254_GET_HFP_STATUS "AT+MY" //Bluetooth inquiry HFP status  disconnect: M0\r\n / connection: M1\r\n / Caller: M2\r\n / Outgoing: M3\r\n / calling: M4\r\n
   return BK3254::sendData(BK3254_GET_HFP_STATUS);
 }
+uint8_t BK3254::getSWVersion() { //BK3254_GET_HFP_STATUS "AT+MQ" //
+  return BK3254::sendData(BK3254_GET_SW_VERSION);
+}
 
+#ifdef BK3266
+uint8_t BK3254::getEqualizerStatus() { //#define BK3266_EQ_STATUS "MEQ" //Inquire EQ 
+	return BK3254::sendCOMData(BK3266_EQ_STATUS);
+}
+
+uint8_t BK3254::setEqualizerStatus(uint8_t eq) { //#define BK3266_SET_EQ "SETEQ" //EQ Set up COM+SETEQNORMAL\r\n; Effective immediately
+	return BK3254::sendCOMData(BK3266_SET_EQ + decodeEqualizer(eq));
+}
+
+uint8_t BK3254::getSongTime() { //#define BK3266_SONGTIME_ON "OT" + GN //switch return string for GN command MUSIC:001500010328\n or correct: xxxxxxxx\n
+	if (BK3254::sendCOMData(BK3266_SONGTIME_ON))
+		return BK3254::sendCOMData(BK3266_GET_SONG_NAME);
+}
+
+uint8_t BK3254::getSongName() { //#define BK3266_SONGTIME_OFF "CT" + GN ; #define BK3266_GET_SONG_NAME "GN" //only 8chars are returned
+	if (BK3254::sendCOMData(BK3266_SONGNAME_ON))
+		return BK3254::sendCOMData(BK3266_GET_SONG_NAME);
+
+}
+String BK3254::decodeEqualizer(uint8_t eq){
+	switch (eq){
+		case NORMAL:  return "NORMAL";
+		case BOOST:   return "BOOST";
+        	case TREBLE:  return "TREBLE";
+	        case POP:     return "POP";
+        	case ROCK:    return "ROCK";
+		case CLASSIC: return "CLASSIC";
+        	case JAZZ:    return "JAZZ";
+        	case DANCE:   return "DANCE";
+	        case RAP:     return "R&P";
+	}
+}
+#endif
 String BK3254::decodeState(uint16_t state){
     switch (state){
 	case Playing:			return F("Playing");
