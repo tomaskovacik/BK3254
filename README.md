@@ -1,25 +1,20 @@
-# IMPORTANT NOTE
-
-take care what module you buy, where are version which did not have support for all features,read description of what you buy, for example here from aliexpress:
-
-<img src="https://raw.githubusercontent.com/tomaskovacik/BK3254/master/bk3254_only_BT.png">
-
-<a href="https://www.aliexpress.com/item/1-pcs-BK3254-Bluetooth-Module-4-1-F6888-Stereo-Audio-Module-FM-Radio-TF-Card-U/32833631256.html">This module at aliexpress</a> works with my breadboard adapter, at least one I buy few months back.
-
-<a href="https://www.aliexpress.com/item/BK3254-Bluetooth-4-1-stereo-audio-module-support-FM-radio-TF-card-U-disk-infrared-remote/32811949610.html">This one</a> has only BT and AUX funtionality, it make poping noise, then module is switching between internaly generated sounds and BT or while swtching from BT to AUX, probably need to use mute pin for muting poweramp, buttons areon ADC, in this PDF:  https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/F-6888_BK3254_datasheet.pdf. I need to state that module which I receive hase these markings: F-6888, V1.2 2016-8-6, so this is not indication of anything!, shame :(
+Here is wiki page with some modules I tested from ali: https://github.com/tomaskovacik/BK3254/wiki/modules-from-ali
 
 
 
 # Library for BK3254 based bluetooth audio module (F-6888)
 
-Supported commands based on this datasheet translate by www.onlinedoctranslator.com:
+Supported commands based on this datasheet translate by www.onlinedoctranslator.com are on <a href="https://github.com/tomaskovacik/BK3254/wiki/Supported-commands-and-event-send-from-module">this</a> wiki page.
 
 https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/BK3254_V1.2_HYT.zh-CN.en.pdf
 
-and this:
-
 https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/BK3254_V1.3_HYT.zh-CN.en.pdf
 
+https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/Bluetooth%20audio%20module%20BK3254%20manual%20V1.4_HYT_%20has%20a%20pairing%20password.zh-CN.en.pdf
+
+# tested modules
+
+<a href="https://github.com/tomaskovacik/BK3254/wiki/modules-from-ali">Here</a> is a wiki page with test result and links to functional modules.
 
 # How to install
 
@@ -36,7 +31,7 @@ BK3254|computer(USB2serial for example)
    RX  |  TX
    TX  |  RX
   GND  |  GND
- VBAT  |  via diode to 5V
+ VBAT  |  via diode to 5V (input for li-ion batery so 4.2V max! )
 
 ## arduino using software serial (UNO, nano..)
 
