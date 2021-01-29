@@ -224,6 +224,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     InputSelected = BT;
     BTState = Connected;
     PowerState = On;
+    CallState = Idle;
   } else if (memcmp(&receivedString[0], "BT_EC", 5) == 0) {
 #if defined DEBUG
     DBG(F("Bluetooth He is busy\n"));
@@ -254,7 +255,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_OC", 5) == 0) {
 #if defined DEBUG
-    DBG(F("Bluetooth Telephone shot\n"));
+    DBG(F("Bluetooth Telephone outgoing call\n"));
 #endif
     InputSelected = BT;
     CallState = OutgoingCall;
