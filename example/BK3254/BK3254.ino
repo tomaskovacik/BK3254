@@ -445,7 +445,7 @@ void printAllInfo() {
 }
 
 void printCallState() {
-  switch (CallState) {
+  switch (BT.CallState) {
     case BT.IncomingCall:
       Serial.print(F("Incomming call: "));
       break;
@@ -552,7 +552,7 @@ void printInputSelected() {
 }
 
 void printPowerState() {
-  switch (PowerState) {
+  switch (BT.PowerState) {
     case BT.On:
       Serial.println(F("Module On"));
       break;
