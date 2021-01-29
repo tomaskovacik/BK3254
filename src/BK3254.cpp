@@ -234,7 +234,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_IC", 5) == 0) {
 #if defined DEBUG
-    DBG(F("Bluetooth A call\n"));
+    DBG(F("Bluetooth incomming call\n"));
 #endif
     InputSelected = BT;
     CallState = IncomingCall;
