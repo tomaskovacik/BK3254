@@ -278,7 +278,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     PowerState = On;
     receivedString="";
 #if defined DEBUG
-   DBG(F("Return false\n"));
+//   DBG(F("Return false\n"));
 #endif
     return 0;
   } else if (memcmp(&receivedString[0], "FM_FQ=", 6) == 0) {
@@ -600,7 +600,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 #endif
   receivedString="";
 #if defined DEBUG
-   DBG(F("Return true\n"));
+//   DBG(F("Return true\n"));
 #endif
   return 1;
 }
