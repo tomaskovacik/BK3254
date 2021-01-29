@@ -227,10 +227,10 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     CallState = Idle;
   } else if (memcmp(&receivedString[0], "BT_EC", 5) == 0) {
 #if defined DEBUG
-    DBG(F("Bluetooth He is busy\n"));
+    DBG(F("Bluetooth call in progress\n"));
 #endif
     InputSelected = BT;
-    CallState = Busy;//is this ok?
+    CallState = CallInProgress;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_IC", 5) == 0) {
 #if defined DEBUG
