@@ -93,7 +93,9 @@ uint8_t BK3254::checkResponce(void){
     delay(1); // wait 1milisecond
   }
   if (timeout == 0) {
-        Serial.println(timeout);
+#if defined DEBUG
+       DBG(F("timeout"); DBG((String)timeout);
+#endif
         return false;
       }
   return true;
