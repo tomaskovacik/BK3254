@@ -151,52 +151,63 @@ class BK3254
 {
   public:
 
-    enum STATES
-    {
-      Playing,             //0x00
-      Idle,                //0x01
-      IncomingCall,        //0x02
-      OutgoingCall,        //0x03
-      CallInProgress,      //0x04
-      Connected,           //0x05
-      Disconnected,        //0x06
-      On,                  //0x07
-      Off,                 //0x08
-      Pairing,             //0x09
-      ShutdownInProgress,  //0x0A
-      BT,                  //0x0B
-      AUX,                 //0x0C
-      USB,                 //0x0D
-      SD,                  //0x0E
-      Connecting,          //0x0F
-      Busy,                //0x10
-      RepeatAll,             //0x11
-      RepeatOne,             //0x12
-      RepeatNone,             //0x13
-      FM,                   //0x14
-      Shuffle,		//0x15
-      NORMAL, //0x16
-      BOOST,//0x17
-      TREBLE,//0x18
-      POP,//0x19
-      ROCK,//0x1A
-      CLASSIC,//0x1B
-      JAZZ,//0x1C
-      DANCE,//0x1D
-      RAP//0x1E
-    };
-
+	enum music : uint8_t {
+		Playing,
+		Stopped
+	};
+	enum call : uint8_t {
+		IncomingCall,
+		OutgoingCall,
+		CallInProgress,
+		Idle
+	};
+	enum bluetooth : uint8_t {
+		Connected,
+		Disconnected,
+		Pairing,
+		Connecting
+	};
+	enum power : uint8_t {
+		On,
+		Off,
+		ShutdownInProgress
+	};
+	enum input : uint8_t {
+		BT,
+		AUX,
+		USB,
+		SD,
+		FM
+	};
+	enum playmode : uint8_t {
+		RepeatAll,
+		RepeatOne,
+		RepeatNone,
+		Shuffle
+	};
 #ifdef BK3266
-    uint8_t eqState=NORMAL;
+	enum equalizermode : uint8_t {
+		NORMAL,
+		BOOST,
+		TREBLE,
+		POP,
+		ROCK,
+		CLASSIC,
+		JAZZ,
+		DANCE,
+		RAP
+	};
+
+     equalizermode eqState=NORMAL;
 #endif
 
-    uint16_t BTState = Disconnected;
-    uint16_t CallState = Idle;
-    uint16_t MusicState = Idle;
-    uint16_t PowerState = Off;
-    uint16_t InputSelected = BT;
-    uint16_t ModeOfPlay = RepeatOne;
-    uint16_t currentVolume=8;
+	bluetooth BTState = Disconnected;
+	call CallState = Idle;
+	music MusicState = Stopped;
+	power PowerState = Off;
+	input InputSelected = BT;
+	playmode ModeOfPlay = RepeatOne;
+    uint8_t currentVolume=8;
     uint16_t NumberOfSongs=0;
     uint16_t CurrentlyPlayingSong;
     uint16_t CurrentFrequency = 0;
@@ -295,15 +306,20 @@ class BK3254
 #ifdef BK3266
 // works with  BK3266
 	uint8_t getEqualizerStatus(); //#define BK3266_EQ_STATUS "MEQ" //Inquire EQ 
-	uint8_t setEqualizerStatus(uint8_t eq = NORMAL); //#define BK3266_SET_EQ "SETEQ" //EQ Set up COM+SETEQNORMAL\r\n; Effective immediately
-	uint8_t getSongTime(); //#define BK3266_SONGTIME_ON "OT" + GN ;switch return string for GN command MUSIC:001500010328\n or correct: xxxxxxxx\n
-	uint8_t getSongName(); //#define BK3266_SONGNAME_ON "CT" + GN ; #define BK3266_GET_SONG_NAME "GN" //only 8chars are returned
-	String decodeEqualizer(uint8_t eq);
+	uint8_t setEqualizerStatus(equalizermode eq = NORMAL); //#define BK3266_SET_EQ "SETEQ" //EQ Set up COM+SETEQNORMAL\r\n; Effective immediately
+	int8_t getSongTime(); //#define BK3266_SONGTIME_ON "OT" + GN ;switch return string for GN command MUSIC:001500010328\n or correct: xxxxxxxx\n
+	int8_t getSongName(); //#define BK3266_SONGNAME_ON "CT" + GN ; #define BK3266_GET_SONG_NAME "GN" //only 8chars are returned
+	String decodeEqualizer(equalizermode eq);
 #endif
 
 
     //support functions
-    String decodeState(uint16_t state);
+	String decodeMusicState(music ms);
+	String decodeCallState(call cl);
+	String decodeBluetoothState(bluetooth bl);
+	String decodePowerState(power pw);
+	String decodeInput(input in);
+	String decodePlayMode(playmode pl);
   private:
    // String receivedString = "";
     uint8_t checkResponce(void);

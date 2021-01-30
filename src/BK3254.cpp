@@ -94,7 +94,7 @@ uint8_t BK3254::checkResponce(void){
   }
   if (timeout == 0) {
 #if defined DEBUG
-       DBG(F("timeout"); DBG((String)timeout);
+       DBG(F("timeout")); DBG((String)timeout);
 #endif
         return false;
       }
@@ -212,7 +212,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     DBG(F("AUX In a suspended state\n"));
 #endif
     InputSelected = AUX;
-    MusicState = Idle;
+    MusicState = Stopped;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "BT_AC", 5) == 0) {
 #if defined DEBUG
@@ -305,7 +305,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     DBG(F("FM In a suspended state\n"));
 #endif
     InputSelected = FM;
-    MusicState = Idle;
+    MusicState = Stopped;
     BTState = Disconnected;
     PowerState = On;
   } else if (memcmp(&receivedString[0], "FM_SC", 5) == 0) {
@@ -412,7 +412,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     DBG(F("SD Card is paused\n"));
 #endif
     InputSelected = SD;
-    MusicState = Idle;
+    MusicState = Stopped;
   } else if (memcmp(&receivedString[0], "SY_PO", 5) == 0) {
 #if defined DEBUG
     DBG(F("Bluetooth turned on\n"));
@@ -420,7 +420,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     PowerState = On;
     BTState = Disconnected; //init all values
     CallState = Idle;
-    MusicState = Idle;
+    MusicState = Stopped;
     CallerID = "";
     BT_ADDR = "";
     BT_NAME = "";
@@ -434,7 +434,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     PowerState = Off; //reset all values:
     BTState = Disconnected;
     CallState = Idle;
-    MusicState = Idle;
+    MusicState = Stopped;
     CallerID = "";
     BT_ADDR = "";
     BT_NAME = "";
@@ -454,7 +454,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 #endif
     InputSelected = USB;
     BTState = Disconnected;
-    MusicState = Idle;
+    MusicState = Stopped;
 #ifdef BK3266
   } else if (memcmp(&receivedString[0], "COM_V", 5) == 0) {
     currentVolume = receivedString.substring(5).toInt();
@@ -512,7 +512,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 #if defined DEBUG
     DBG(F("Idle\n"));
 #endif
-    MusicState = Idle;
+    MusicState = Stopped;
   } else if (memcmp(&receivedString[0], "M0", 2) == 0) {
 #if defined DEBUG
     DBG(F("Disconnect\n"));
@@ -527,17 +527,17 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 #if defined DEBUG
     DBG(F("Caller"));
 #endif
-    BTState = CallInProgress;
+    CallState = CallInProgress;
   } else if (memcmp(&receivedString[0], "M3", 2) == 0) {
 #if defined DEBUG
     DBG(F("Outgoing\n"));
 #endif
-    BTState = OutgoingCall;
+    CallState = OutgoingCall;
   } else if (memcmp(&receivedString[0], "M4", 2) == 0) {
 #if defined DEBUG
     DBG(F("Calling\n"));
 #endif
-    BTState = IncomingCall;
+    CallState = IncomingCall;
   } else if (memcmp(&receivedString[0], "MFM", 3) == 0) {
 #if defined DEBUG
    DBG(F("Current preset: "));
@@ -548,7 +548,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 #endif
 
   } else if (memcmp(&receivedString[0], "MUSICPLYFINISH", 14) == 0 ) {
-    MusicState = Idle;
+    MusicState = Stopped;
 #if defined DEBUG
    DBG(F("MUSICPLYFINISH\n"));
 #endif
@@ -935,21 +935,23 @@ uint8_t BK3254::getEqualizerStatus() { //#define BK3266_EQ_STATUS "MEQ" //Inquir
 	return BK3254::sendCOMData(BK3266_EQ_STATUS);
 }
 
-uint8_t BK3254::setEqualizerStatus(uint8_t eq) { //#define BK3266_SET_EQ "SETEQ" //EQ Set up COM+SETEQNORMAL\r\n; Effective immediately
+uint8_t BK3254::setEqualizerStatus(equalizermode eq) { //#define BK3266_SET_EQ "SETEQ" //EQ Set up COM+SETEQNORMAL\r\n; Effective immediately
 	return BK3254::sendCOMData(BK3266_SET_EQ + decodeEqualizer(eq));
 }
 
-uint8_t BK3254::getSongTime() { //#define BK3266_SONGTIME_ON "OT" + GN //switch return string for GN command MUSIC:001500010328\n or correct: xxxxxxxx\n
+int8_t BK3254::getSongTime() { //#define BK3266_SONGTIME_ON "OT" + GN //switch return string for GN command MUSIC:001500010328\n or correct: xxxxxxxx\n
 	if (BK3254::sendCOMData(BK3266_SONGTIME_ON))
 		return BK3254::sendCOMData(BK3266_GET_SONG_NAME);
+	return -1;
 }
 
-uint8_t BK3254::getSongName() { //#define BK3266_SONGTIME_OFF "CT" + GN ; #define BK3266_GET_SONG_NAME "GN" //only 8chars are returned
+int8_t BK3254::getSongName() { //#define BK3266_SONGTIME_OFF "CT" + GN ; #define BK3266_GET_SONG_NAME "GN" //only 8chars are returned
 	if (BK3254::sendCOMData(BK3266_SONGNAME_ON))
 		return BK3254::sendCOMData(BK3266_GET_SONG_NAME);
+	return -1;
 
 }
-String BK3254::decodeEqualizer(uint8_t eq){
+String BK3254::decodeEqualizer(equalizermode eq){
 	switch (eq){
 		case NORMAL:  return "NORMAL";
 		case BOOST:   return "BOOST";
@@ -961,30 +963,61 @@ String BK3254::decodeEqualizer(uint8_t eq){
         	case DANCE:   return "DANCE";
 	        case RAP:     return "R&P";
 	}
+	return "-1";
 }
 #endif
-String BK3254::decodeState(uint16_t state){
-    switch (state){
-	case Playing:			return F("Playing");
+String BK3254::decodeMusicState(music ms){
+	switch(ms){
+        case Playing:                   return F("Playing");
+        case Stopped:                   return F("Stopped");
+        };
+	return "-1";
+}
+String BK3254::decodeCallState(call cl){
+	switch(cl){
+        case IncomingCall:              return F("IncomingCall");
+        case OutgoingCall:              return F("OutgoingCall");
+        case CallInProgress:            return F("CallInProgress");
 	case Idle:			return F("Idle");
-	case IncomingCall:		return F("IncomingCall");
-	case OutgoingCall:		return F("OutgoingCall");
-	case CallInProgress: 		return F("CallInProgress");
-	case Connected:      		return F("Connected");
-	case Disconnected:   		return F("Disconnected");
-	case On:			return F("On");
-	case Off:			return F("Off");
-	case Pairing:            	return F("Pairing");
-	case ShutdownInProgress: 	return F("ShutdownInProgress");
-	case BT:			return F("BT");
-	case AUX:			return F("AUX");
-	case USB:			return F("USB");
-	case SD:			return F("SD");
-	case Connecting:		return F("Connecting");
-	case Busy:			return F("Busy");
-	case RepeatAll:			return F("RepeatAll");
-	case RepeatOne:			return F("RepeatOne");
-	case RepeatNone:		return F("RepeatNone");
-	case FM:			return F("FM");
-    }
+	};
+	return "-1";
+}
+
+String BK3254::decodeBluetoothState(bluetooth bl) {
+	switch(bl){
+        case Connected:                 return F("Connected");
+        case Disconnected:              return F("Disconnected");
+        case Pairing:                   return F("Pairing");
+        case Connecting:                return F("Connecting");
+        };
+	return "-1";
+}
+String BK3254::decodePowerState(power pw) {
+	switch(pw){
+        case On:                        return F("On");
+        case Off:                       return F("Off");
+        case ShutdownInProgress:        return F("ShutdownInProgress");
+        };
+	return "-1";
+}
+
+String BK3254::decodeInput(input in){
+	switch(in){
+        case BT:                        return F("BT");
+        case AUX:                       return F("AUX");
+        case USB:                       return F("USB");
+        case SD:                        return F("SD");
+        case FM:                        return F("FM");
+        };
+	return "-1";
+}
+
+String BK3254::decodePlayMode(playmode pl){
+	switch(pl){
+        case RepeatAll:                 return F("RepeatAll");
+        case RepeatOne:                 return F("RepeatOne");
+        case RepeatNone:                return F("RepeatNone");
+        case Shuffle:			return F("Shuffle");
+        };
+	return "-1";
 }

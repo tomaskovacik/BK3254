@@ -11,15 +11,15 @@
 
 #define resetBTpin 5
 
-uint16_t BTState;
-uint16_t CallState;
-uint16_t MusicState;
-uint16_t PowerState;
-uint16_t InputSelected;
-uint16_t ModeOfPlay;
+BK3254::bluetooth BTState;
+BK3254::call CallState;
+BK3254::music MusicState;
+BK3254::power PowerState;
+BK3254::input InputSelected;
+BK3254::playmode ModeOfPlay;
 uint16_t CurrentFrequency;
 uint8_t CurrentPreset;
-uint16_t currentVolume;
+uint8_t currentVolume;
 String CallerID = "";
 uint16_t time=0;
 uint16_t timeout=500;
@@ -445,27 +445,15 @@ void printAllInfo() {
 }
 
 void printCallState() {
-  switch (BT.CallState) {
-    case BT.IncomingCall:
-      Serial.print(F("Incomming call: "));
-      break;
-    case BT.OutgoingCall:
-      Serial.print(F("Outgoing call: "));
-      break;
-    case BT.CallInProgress:
-      Serial.print(F("Calling: "));
-      break;
-    case BT.Idle:
-      Serial.print(F("Call ended."));
-      break;
-  }
-  if (CallState != BT.Idle)
+  Serial.print(F("Current mode: "));
+  Serial.println(BT.decodeCallState(BT.CallState));
+  if (BT.CallState != BT.Idle)
     Serial.println(BT.CallerID);
 }
 
 void printCurrentModeOfPlay() {
   Serial.print(F("Current mode: "));
-  Serial.println(BT.decodeState(BT.ModeOfPlay));
+  Serial.println(BT.decodePlayMode(BT.ModeOfPlay));
 }
 
 void printCurrentVolume() {
@@ -485,31 +473,13 @@ void printCurrentPreset() {
 }
 
 void printModeOfPlay() {
-  switch (BT.ModeOfPlay) {
-    case (BT.RepeatAll):
-      Serial.println(F("Repeat all"));
-      break;
-    case (BT.RepeatOne):
-      Serial.println(F("Repeat one"));
-      break;
-    case (BT.RepeatNone):
-      Serial.println(F("No repeat"));
-      break;
-  }
+  Serial.print(F("INPUT: "));
+  Serial.println(BT.decodePlayMode(BT.ModeOfPlay));
 }
 
 void printBTstate() {
-  switch (BT.BTState) {
-    case BT.Connected:
-      Serial.println(F("Bluetooth connected"));
-      break;
-    case BT.Disconnected:
-      Serial.println(F("Bluetooth disconnected"));
-      break;
-    case BT.Pairing:
-      Serial.println(F("Bluetooth in pairing mode"));
-      break;
-  }
+  Serial.print(F("INPUT: "));
+  Serial.println(BT.decodeBluetoothState(BT.BTState));
 }
 
 void printMusicState() {
@@ -524,42 +494,19 @@ void printMusicState() {
         Serial.print(F("Playing song ")); Serial.print(BT.CurrentlyPlayingSong); Serial.print(F(" of ")); Serial.print(BT.NumberOfSongs); Serial.println(".");
       }
       break;
-    case (BT.Idle):
-      Serial.println(F("Music stoped"));
+    case (BT.Stopped):
+      Serial.println(F("Music stopped"));
       break;
   }
 }
 
 void printInputSelected() {
-  switch (BT.InputSelected) {
-    case (BT.AUX):
-      Serial.println(F("AUX selected"));
-      break;
-    case (BT.SD):
-      Serial.println(F("SD/TF Card selected"));
-      break;
-    case (BT.BT):
-      Serial.println(F("BlueTooth selected"));
-      break;
-    case (BT.USB):
-      Serial.println(F("USB selected"));
-      break;
-    case (BT.FM):
-      Serial.println(F("FM selected"));
-      void printFMFreq();
-      break;
-  }
+  Serial.print(F("INPUT: "));
+  Serial.println(BT.decodeInput(BT.InputSelected));
 }
+
 
 void printPowerState() {
-  switch (BT.PowerState) {
-    case BT.On:
-      Serial.println(F("Module On"));
-      break;
-    case BT.Off:
-      Serial.println(F("Module Off"));
-      break;
-  }
+  Serial.print(F("Module: "));
+  Serial.println(BT.decodePowerState(BT.PowerState));
 }
-
-
