@@ -174,22 +174,19 @@ class BK3254
       RepeatOne,             //0x12
       RepeatNone,             //0x13
       FM,                   //0x14
-      Shuffle			//0x15
+      Shuffle,		//0x15
+      NORMAL, //0x16
+      BOOST,//0x17
+      TREBLE,//0x18
+      POP,//0x19
+      ROCK,//0x1A
+      CLASSIC,//0x1B
+      JAZZ,//0x1C
+      DANCE,//0x1D
+      RAP//0x1E
     };
 
 #ifdef BK3266
-    enum eq{
-	NORMAL, //1
-	BOOST,//2
-	TREBLE,//3
-	POP,//4
-	ROCK,//5
-	CLASSIC,//6
-	JAZZ,//7
-	DANCE,//8
-	RAP//9
-	};
-
     uint8_t eqState=NORMAL;
 #endif
 
