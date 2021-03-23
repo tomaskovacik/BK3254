@@ -475,8 +475,8 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     DBG(F("BT ADDRESS: "));DBG(BT_ADDR + "\n");
 #endif
 #ifdef BK3266
-  } else if (memcmp(&receivedString[0], " PN_", 4) == 0) {
-    BT_PIN = receivedString.substring(4);
+  } else if (memcmp(&receivedString[0], "PN_", 3) == 0) {
+    BT_PIN = receivedString.substring(3);
 #else
   } else if (memcmp(&receivedString[0], " PN: ", 5) == 0) {
     BT_PIN = receivedString.substring(5);
@@ -617,9 +617,17 @@ String BK3254::returnCallerID(String receivedString) {
 
 String BK3254::returnBtModuleName(String receivedString) {
 #if defined DEBUG
+#ifdef BK3266
+  DBG(F("Bluetooth module name: "));DBG(receivedString.substring(3) + "\n");
+#else
   DBG(F("Bluetooth module name: "));DBG(receivedString.substring(4) + "\n");
 #endif
+#endif
+#ifdef BK3266
+  return receivedString.substring(3);
+#else
   return receivedString.substring(4);
+#endif
 }
 
 uint16_t BK3254::returnFreq(String receivedString) {
@@ -904,15 +912,27 @@ uint8_t BK3254::fmGetFreqOfPreset(String preset) { //BK3254_FM_GET_FREQ_OF_PRESE
 //Query / feedback commands
 
 uint8_t BK3254::getAddress() { //BK3254_GET_ADDRESS "AT+MR" //Queries Bluetooth address   AD: 191919191919\r\n
+#ifdef BK3266
+  return BK3254::sendBTData(BK3254_GET_ADDRESS);
+#else
   return BK3254::sendData(BK3254_GET_ADDRESS);
+#endif
 }
 
 uint8_t BK3254::getPinCode() { //BK3254_GET_PIN_CODE "AT+MP" //PIN Code query  PN: 0000\r\n
+#ifdef BK3266
+  return BK3254::sendBTData(BK3254_GET_PIN_CODE);
+#else
   return BK3254::sendData(BK3254_GET_PIN_CODE);
+#endif
 }
 
 uint8_t BK3254::getName() { //BK3254_GET_NAME "AT+MN" //Bluetooth name query  NA: BK3254\r\n
+#ifdef BK3266
+  return BK3254::sendBTData(BK3254_GET_NAME);
+#else
   return BK3254::sendData(BK3254_GET_NAME);
+#endif
 }
 
 uint8_t BK3254::getConnectionStatus() { //BK3254_GET_CONNECTION_STATUS "AT+MO" //Bluetooth connection status inquiry   connection succeeded: C1\r\n / no connection: C0\r\n

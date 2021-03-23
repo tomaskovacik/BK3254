@@ -20,7 +20,7 @@
 #define USE_SW_SERIAL
 
 #define DEBUG
-//#define BK3266
+#define BK3266
 
 // UART COMMANDS
 #ifdef BK3266
@@ -123,8 +123,8 @@
 //Query / feedback commands
 #ifdef BK3266
 #define BK3254_GET_ADDRESS "GAD" //Queries Bluetooth address ;BT+GAD\r\n;  AD_191919191919\r\n
-#define BK3254_GET_PIN_CODE "GNM" //PIN Code query ;BT+GNM\r\n; PN_0000\r\n
-#define BK3254_GET_NAME "GPI" //Bluetooth name query ;BT+GPI\r\n; NA_BK3254\r\n
+#define BK3254_GET_PIN_CODE "GPI" //PIN Code query ;BT+GNM\r\n; PN_0000\r\n
+#define BK3254_GET_NAME "GNM" //Bluetooth name query ;BT+GPI\r\n; NA_BK3254\r\n
 #else
 #define BK3254_GET_ADDRESS "MR" //Queries Bluetooth address   AD: 191919191919\r\n
 #define BK3254_GET_PIN_CODE "MP" //PIN Code query  PN: 0000\r\n , droped in firmware V1.4
