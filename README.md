@@ -2,7 +2,9 @@ Here is wiki page with some modules I tested from ali: https://github.com/tomask
 
 
 
-# Library for BK3254 based bluetooth audio module (F-6888)
+# Library for BK3254/BK3266 based bluetooth audio module (F-6888/F6988)
+
+This library suppors only BK3266 based module with BT name HY5066 form HYT, it is only receiver module and it is using "ASCI" mode of comunication (AT+,COM+,BT+ commands). This library do not support HY5066SR module (tranmiter/receiver), library for this module is [this epository](https://github.com/tomaskovacik/HY5066SR/).
 
 Supported commands based on this datasheet translate by www.onlinedoctranslator.com are on <a href="https://github.com/tomaskovacik/BK3254/wiki/Supported-commands-and-event-send-from-module">this</a> wiki page.
 
@@ -10,7 +12,7 @@ https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-68
 
 https://github.com/tomaskovacik/kicad-library/tree/master/library/datasheet/F-6988_BK3266
 
-# tested modules
+# Tested modules
 
 <a href="https://github.com/tomaskovacik/BK3254/wiki/modules-from-ali">Here</a> is a wiki page with test result and links to functional modules.
 
