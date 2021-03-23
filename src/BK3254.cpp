@@ -3,7 +3,7 @@
         (C) Tomas Kovacik [nail at nodomain dot sk]
         https://github.com/tomaskovacik/
 
-        BK3254 module library
+        BK3254/BK3266 module library
 */
 
 #include "BK3254.h"
