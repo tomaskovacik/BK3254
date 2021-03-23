@@ -6,11 +6,9 @@ Here is wiki page with some modules I tested from ali: https://github.com/tomask
 
 Supported commands based on this datasheet translate by www.onlinedoctranslator.com are on <a href="https://github.com/tomaskovacik/BK3254/wiki/Supported-commands-and-event-send-from-module">this</a> wiki page.
 
-https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/BK3254_V1.2_HYT.zh-CN.en.pdf
+https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/
 
-https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/BK3254_V1.3_HYT.zh-CN.en.pdf
-
-https://github.com/tomaskovacik/kicad-library/blob/master/library/datasheet/F-6888_bk3254/Bluetooth%20audio%20module%20BK3254%20manual%20V1.4_HYT_%20has%20a%20pairing%20password.zh-CN.en.pdf
+https://github.com/tomaskovacik/kicad-library/tree/master/library/datasheet/F-6988_BK3266
 
 # tested modules
 
