@@ -19,7 +19,7 @@
 
 #define USE_SW_SERIAL
 
-#define DEBUG
+//#define DEBUG
 #define BK3266
 
 // UART COMMANDS
