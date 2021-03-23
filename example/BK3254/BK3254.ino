@@ -1,11 +1,10 @@
 /*
-        GNU GPL v3
-        (C) Tomas Kovacik [nail at nodomain dot sk]
-        https://github.com/tomaskovacik/
+       GNU GPL v3
+       (C) Tomas Kovacik [nail at nodomain dot sk]
+       https://github.com/tomaskovacik/
 
-        example for library for A2DP bluetooth modules based on BEKEN corp chip BK3254
+       example for library for A2DP bluetooth modules based on BEKEN corp chip BK3254 and BK3266
 */
-
 
 #include "BK3254.h"
 
@@ -21,8 +20,8 @@ uint16_t CurrentFrequency;
 uint8_t CurrentPreset;
 uint8_t currentVolume;
 String CallerID = "";
-uint16_t time=0;
-uint16_t timeout=500;
+uint16_t time = 0;
+uint16_t timeout = 500;
 
 SoftwareSerial swSerial(7, 6); //rxPin, txPin, inverse_logic
 
@@ -31,17 +30,17 @@ BK3254 BT(&swSerial, resetBTpin);
 #define INITVOLUME "1"
 
 void getInitStates() {
-  time=millis();
+  time = millis();
   while (BT.getName() != 1 && time - millis() < timeout);
-  time=millis();
+  time = millis();
   while (BT.getConnectionStatus() != 1 && time - millis() < timeout);
-  time=millis();
+  time = millis();
   while (BT.getPinCode() != 1 && time - millis() < timeout);
-  time=millis();
+  time = millis();
   while (BT.getAddress() != 1 && time - millis() < timeout);
-  time=millis();
+  time = millis();
   while (BT.getMusicStatus() != 1 && time - millis() < timeout);
-  time=millis();
+  time = millis();
   while (BT.getHFPStatus() != 1 && time - millis() < timeout);
 }
 
@@ -52,7 +51,7 @@ void setup() {
   delay(1000);
   getInitStates();
   delay(100);
-  time=millis();
+  time = millis();
   while (BT.volumeSet(INITVOLUME) != 1 && time - millis() < timeout);
 }
 
@@ -135,6 +134,10 @@ void loop() {
         Serial.println(F("Get autoplay status    6"));
         Serial.println(F("Autoplay On            7"));
         Serial.println(F("Autoplay Off           8"));
+        Serial.println(F("getSWVersion           9"));
+        Serial.println(F("getEqualizerStatus     ."));
+        Serial.println(F("getSongTime            ,"));
+        Serial.println(F("getSongName            /"));
         printAllInfo();
 
         break;
@@ -378,6 +381,18 @@ void loop() {
           BT.autoPlayOff();
         }
         break;
+      case '9':
+        BT.getSWVersion();
+        break;
+      case '.':
+        BT.getEqualizerStatus();
+        break;
+      case ',':
+        BT.getSongTime();
+        break;
+      case '/':
+        BT.getSongName();
+        break;
     }
   }
 
@@ -431,9 +446,9 @@ void loop() {
 }
 
 void printAllInfo() {
-  Serial.print(F("BT name: "));Serial.println(BT.BT_NAME);
-  Serial.print(F("Pin: "));Serial.println(BT.BT_PIN);
-  Serial.print(F("BT address: "));Serial.println(BT.BT_ADDR);
+  Serial.print(F("BT name: ")); Serial.println(BT.BT_NAME);
+  Serial.print(F("Pin: ")); Serial.println(BT.BT_PIN);
+  Serial.print(F("BT address: ")); Serial.println(BT.BT_ADDR);
   printInputSelected();
   printMusicState();
   printBTstate();
