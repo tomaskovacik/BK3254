@@ -384,6 +384,7 @@ void loop() {
       case '9':
         BT.getSWVersion();
         break;
+#ifdef BK3266
       case '.':
         BT.getEqualizerStatus();
         break;
@@ -393,6 +394,7 @@ void loop() {
       case '/':
         BT.getSongName();
         break;
+#endif
     }
   }
 
