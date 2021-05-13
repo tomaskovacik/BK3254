@@ -245,7 +245,7 @@ class BK3254
     uint8_t callRedial();
     uint8_t musicTogglePlayPause();
     uint8_t musicPlay();
-    uint8_t musicPause();
+    uint8_t musicStop();
     uint8_t musicNextTrack();
     uint8_t musicPreviousTrack();
     uint8_t volumeUp();

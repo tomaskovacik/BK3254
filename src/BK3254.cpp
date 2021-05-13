@@ -778,7 +778,7 @@ uint8_t BK3254::musicPlay() { //BK3254_MUSIC_PLAY "COM+PA" //Music Play
   return BK3254::sendCOMData(BK3254_MUSIC_PLAY);
 }
 
-uint8_t BK3254::musicPause() { //BK3254_MUSIC_PAUSE "COM+PU" //Music Pause
+uint8_t BK3254::musicStop() { //BK3254_MUSIC_PAUSE "COM+PU" //Music Pause
   return BK3254::sendCOMData(BK3254_MUSIC_PAUSE);
 }
 
