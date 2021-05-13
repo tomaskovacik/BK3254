@@ -135,9 +135,11 @@ void loop() {
         Serial.println(F("Autoplay On            7"));
         Serial.println(F("Autoplay Off           8"));
         Serial.println(F("getSWVersion           9"));
+#ifdef BK3266
         Serial.println(F("getEqualizerStatus     ."));
         Serial.println(F("getSongTime            ,"));
         Serial.println(F("getSongName            /"));
+#endif
         printAllInfo();
 
         break;
