@@ -49,7 +49,7 @@ void BK3254::resetHigh() {
 */
 #if defined DEBUG
 void BK3254::DBG(String text) {
-  Serial.print(text);;
+  Serial.print(text);
 }
 #endif
 
@@ -64,16 +64,16 @@ void BK3254::resetModule() {
 }
 
 uint8_t BK3254::getNextEventFromBT() {
-  char c;
+  char c = 0;  // initialize to avoid undefined behavior on first loop check
   static String receivedString;
-  while (btSerial -> available() > 0 && c != '\n') { //read serial buffer until \n
+  while (btSerial -> available() > 0) { //read serial buffer until \n
     c = (btSerial -> read());
     if (c == 0xA) {
       if (receivedString == "") { //nothing before enter was received
   #if defined DEBUG
-        DBG(F("received only empty string\n running again myself...\n"));
+        DBG(F("received only empty string, skipping...\n"));
   #endif
-        return BK3254::getNextEventFromBT();
+        continue;  // skip empty lines without recursion
       }
       uint8_t ret = decodeReceivedString(receivedString);
       receivedString="";
@@ -85,29 +85,32 @@ uint8_t BK3254::getNextEventFromBT() {
   return 0;
 }
 
-uint8_t BK3254::checkResponce(void){
-  uint16_t timeout=500;//500ms -- datasheet did not stated any timeout for "OK" responce, so I give him 500ms
-  while (!getNextEventFromBT() && timeout > 0)
+uint8_t BK3254::checkResponse(void){
+  uint16_t timeout=1000;//1000ms -- datasheet did not stated any timeout for "OK" response, so I give him 1000ms
+  uint8_t result;
+  while ((result = getNextEventFromBT()) == 0 && timeout > 0)
   {
     timeout--;
     delay(1); // wait 1milisecond
   }
   if (timeout == 0) {
 #if defined DEBUG
-       DBG(F("timeout")); DBG((String)timeout);
+       DBG(F("timeout\n"));
 #endif
         return false;
       }
+  if (result == 2) return false;  // ERR response from device
   return true;
 }
 
-uint8_t BK3254::sendData(String cmd) {
-  String Command = "AT+" + cmd + "\r\n";
+uint8_t BK3254::sendATData(char cmd[]) {
+//  String Command = "AT+" + cmd + "\r\n";
 #if defined DEBUG
-  DBG(F("sending "));DBG(Command);
+  DBG(F("sending "));DBG(cmd);
 #endif
-  btSerial -> print(Command);
-  return checkResponce();
+  btSerial -> print("AT+");
+  btSerial -> println(cmd);
+  return checkResponse();
 }
 
 uint8_t BK3254::sendCOMData(String cmd) { 
@@ -116,29 +119,32 @@ uint8_t BK3254::sendCOMData(String cmd) {
 #if defined DEBUG
   DBG(F("sending "));DBG(Command);
 #endif
+//  btSerial -> print("COM+");
   btSerial -> print(Command);
-  return checkResponce();
+  return checkResponse();
 }
 
-uint8_t BK3254::sendBTData(String cmd) {
+uint8_t BK3254::sendBTData(char cmd[]) {
   BK3254::getNextEventFromBT();
-  String Command = "BT+" + cmd + "\r\n";
+//  String Command = "BT+" + cmd + "\r\n";
 #if defined DEBUG
-  DBG(F("sending "));DBG(Command);
+  DBG(F("sending "));DBG(cmd);
 #endif
-  btSerial -> print(Command);
-  return checkResponce();
+  btSerial -> print("BT+");
+  btSerial -> println(cmd);
+  return checkResponse();
 }
 
-uint8_t BK3254::sendFMData(String cmd) {
+uint8_t BK3254::sendFMData(char cmd[]) {
   BK3254::getNextEventFromBT();
-  String Command = "FM+" + cmd + "\r\n";
+//  String Command = "FM+" + cmd + "\r\n";
 #if defined DEBUG
-  DBG(F("sending "));DBG(Command);
+  DBG(F("sending "));DBG(cmd);
 #endif
   delay(100);
-  btSerial -> print(Command);
-  return checkResponce();
+  btSerial -> print("FM+");
+  btSerial -> println(cmd);
+  return checkResponse();
 }
 
 /*
@@ -152,7 +158,7 @@ uint8_t BK3254::sendFMData(String cmd) {
   BT_WC\n   Bluetooth connection is in wait state
   BT_OC\n   Bluetooth Telephone shot
   BT_PA\n   Bluetooth Now Playing
-  EEROR\n   error
+  ERROR\n   error
   FM_FQ = 1081\n  Tunner frequency
   FM_PA\n   FM You are listening state
   FM_PU\r\n   FM In a suspended state
@@ -276,14 +282,11 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
     PowerState = On;
   } else if (memcmp(&receivedString[0], "ERR", 3) == 0) {
 #if defined DEBUG
-    DBG(F("Error"));
+    DBG(F("Error\n"));
 #endif
     PowerState = On;
     receivedString="";
-#if defined DEBUG
-//   DBG(F("Return false\n"));
-#endif
-    return 0;
+    return 2;  // distinct from 0 (no event) so checkResponse can exit immediately
   } else if (memcmp(&receivedString[0], "FM_FQ=", 6) == 0) {
     CurrentFrequency = receivedString.substring(6).toInt();
 #if defined DEBUG
@@ -335,6 +338,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 #endif
     InputSelected = BT;
     BTState = Connected;
+    CallState = IncomingCall;
     CallerID = BK3254::returnCallerID(receivedString);
     PowerState = On;
   } else if (memcmp(&receivedString[0], "IR", 2) == 0) {
@@ -348,6 +352,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 #endif
     InputSelected = BT;
     BTState = Connected;
+    CallState = OutgoingCall;
     CallerID = BK3254::returnCallerID(receivedString);
     PowerState = On;
   } else if (memcmp(&receivedString[0], "MMMP", 4) == 0) {
@@ -559,7 +564,7 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 #if defined DEBUG
    DBG(F("EQ: NORMAL\n"));
 #endif
-  } else if (memcmp(&receivedString[0], "BOOST", 6) == 0 ) {
+  } else if (memcmp(&receivedString[0], "BOOST", 5) == 0 ) {
     eqState = BOOST;
 #if defined DEBUG
    DBG(F("EQ: BOOST\n"));
@@ -610,9 +615,9 @@ uint8_t BK3254::decodeReceivedString(String receivedString) {
 
 String BK3254::returnCallerID(String receivedString) {
 #if defined DEBUG
-  DBG(F("Calling: "));DBG(receivedString.substring(4, (receivedString.length() - 2)) + "\n");
+  DBG(F("Calling: "));DBG(receivedString.substring(4, (receivedString.length() - 1)) + "\n");
 #endif
-  return receivedString.substring(4, (receivedString.length() - 2)); //start at 4 cose: IR-"+123456789" or PR-"+123456789" and one before end to remove " and \0
+  return receivedString.substring(4, (receivedString.length() - 1)); //start at 4: IR-"+123456789" or PR-"+123456789", remove trailing "
 }
 
 String BK3254::returnBtModuleName(String receivedString) {
@@ -711,7 +716,7 @@ uint8_t BK3254::reboot() {
 
 */
 uint8_t BK3254::changePin(String newPin) {//this command did not work on my module ...
-  if (newPin.length() - 2 > 16) { //count for termination char
+  if (newPin.length() > 18) { //max 16 chars + 2 for termination
 #if defined DEBUG
     DBG(F("Pin to long, max 16chars"));
 #endif
@@ -728,7 +733,7 @@ uint8_t BK3254::changePin(String newPin) {//this command did not work on my modu
 
 */
 uint8_t BK3254::changeName(String newName) {//this command did not work on my module ...
-  if (newName.length() - 2 > 16) { //count for termination char
+  if (newName.length() > 18) { //max 16 chars + 2 for termination
 #if defined DEBUG
     DBG(F("name to long, max 16chars"));
 #endif
@@ -754,8 +759,8 @@ uint8_t BK3254::disconnect() {// BK3254_DISCONNECT "BT+DC" //Disconect
 }
 
 
-uint8_t BK3254::callAnsware() { //BK3254_CALL_ANSWARE "BT+CA" //Answare the call
-  return BK3254::sendBTData(BK3254_CALL_ANSWARE);
+uint8_t BK3254::callAnswer() { //BK3254_CALL_ANSWER "BT+CA" //Answer the call
+  return BK3254::sendBTData(BK3254_CALL_ANSWER);
 }
 
 uint8_t BK3254::callReject() { //BK3254_CALL_REJECT "BT+CJ" //To reject a call
@@ -915,7 +920,7 @@ uint8_t BK3254::getAddress() { //BK3254_GET_ADDRESS "AT+MR" //Queries Bluetooth 
 #ifdef BK3266
   return BK3254::sendBTData(BK3254_GET_ADDRESS);
 #else
-  return BK3254::sendData(BK3254_GET_ADDRESS);
+  return BK3254::sendATData(BK3254_GET_ADDRESS);
 #endif
 }
 
@@ -923,7 +928,7 @@ uint8_t BK3254::getPinCode() { //BK3254_GET_PIN_CODE "AT+MP" //PIN Code query  P
 #ifdef BK3266
   return BK3254::sendBTData(BK3254_GET_PIN_CODE);
 #else
-  return BK3254::sendData(BK3254_GET_PIN_CODE);
+  return BK3254::sendATData(BK3254_GET_PIN_CODE);
 #endif
 }
 
@@ -931,23 +936,23 @@ uint8_t BK3254::getName() { //BK3254_GET_NAME "AT+MN" //Bluetooth name query  NA
 #ifdef BK3266
   return BK3254::sendBTData(BK3254_GET_NAME);
 #else
-  return BK3254::sendData(BK3254_GET_NAME);
+  return BK3254::sendATData(BK3254_GET_NAME);
 #endif
 }
 
 uint8_t BK3254::getConnectionStatus() { //BK3254_GET_CONNECTION_STATUS "AT+MO" //Bluetooth connection status inquiry   connection succeeded: C1\r\n / no connection: C0\r\n
-  return BK3254::sendData(BK3254_GET_CONNECTION_STATUS);
+  return BK3254::sendATData(BK3254_GET_CONNECTION_STATUS);
 }
 
 uint8_t BK3254::getMusicStatus() { //BK3254_MUSIC_GET_STATUS "AT+MV" //Bluetooth playback status inquiry   Play: MB\r\n / time out: MA\r\n / disconnect: M0\r\n
-  return BK3254::sendData(BK3254_GET_MUSIC_STATUS);
+  return BK3254::sendATData(BK3254_GET_MUSIC_STATUS);
 }
 
 uint8_t BK3254::getHFPStatus() { //BK3254_GET_HFP_STATUS "AT+MY" //Bluetooth inquiry HFP status  disconnect: M0\r\n / connection: M1\r\n / Caller: M2\r\n / Outgoing: M3\r\n / calling: M4\r\n
-  return BK3254::sendData(BK3254_GET_HFP_STATUS);
+  return BK3254::sendATData(BK3254_GET_HFP_STATUS);
 }
 uint8_t BK3254::getSWVersion() { //BK3254_GET_HFP_STATUS "AT+MQ" //
-  return BK3254::sendData(BK3254_GET_SW_VERSION);
+  return BK3254::sendATData(BK3254_GET_SW_VERSION);
 }
 
 #ifdef BK3266

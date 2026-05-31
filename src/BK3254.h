@@ -19,7 +19,7 @@
 
 #define USE_SW_SERIAL
 
-//#define DEBUG
+#define DEBUG
 //#define BK3266
 
 // UART COMMANDS
@@ -31,7 +31,7 @@
 #define BK3266_QE_TREBLE "TREBLE"
 #define BK3266_QE_POP "POP"
 #define BK3266_QE_ROCK "ROCK"
-#define BK3266_QE_CLASIC "CLASSIC"
+#define BK3266_QE_CLASSIC "CLASSIC"
 #define BK3266_QE_JAZZ "JAZZ"
 #define BK3266_QE_DANCE "DANCE"
 #define BK3266_QE_RAP "RAP"
@@ -68,7 +68,7 @@
 #define BK3254_PAIRING "PR" //Pairing   
 #define BK3254_PAIRING_DEVICE "AC" //The last paired device connected (connect to last device?)  
 #define BK3254_DISCONNECT "DC" //Disconect   
-#define BK3254_CALL_ANSWARE "CA" //Answare the call  
+#define BK3254_CALL_ANSWER "CA" //Answer the call  
 #define BK3254_CALL_REJECT "CJ" //To reject a call  
 #define BK3254_CALL_HANGUP "CE" //Hang up the phone   
 #define BK3254_CALL_REDIAL "CR" //Last number redial  
@@ -230,16 +230,17 @@ class BK3254
 #endif
     void begin(uint32_t baudrate = 9600);
     ~BK3254();
-    uint8_t sendData(String cmd); //AT+
+    //uint8_t sendATData(String cmd); //AT+
+    uint8_t sendATData(char cmd[]); //AT+
     uint8_t sendCOMData(String cmd); //COM+
-    uint8_t sendFMData(String cmd); //FM+
-    uint8_t sendBTData(String cmd); //BT+
+    uint8_t sendFMData(char cmd[]); //FM+
+    uint8_t sendBTData(char cmd[]); //BT+
     void resetModule();
     uint8_t getNextEventFromBT();
     uint8_t pairingInit();
     uint8_t connectLastDevice();
     uint8_t disconnect();
-    uint8_t callAnsware();
+    uint8_t callAnswer();
     uint8_t callReject();
     uint8_t callHangUp();
     uint8_t callRedial();
@@ -322,10 +323,9 @@ class BK3254
 	String decodePlayMode(playmode pl);
   private:
    // String receivedString = "";
-    uint8_t checkResponce(void);
+    uint8_t checkResponse(void);
     uint8_t _reset;
     uint8_t decodeReceivedString(String receivedString);
-    uint8_t decodeReceivedStringOld(String receivedString);
 #if defined DEBUG
 	void DBG(String text);
 #endif

@@ -4,7 +4,19 @@ Here is wiki page with some modules I tested from ali: https://github.com/tomask
 
 # Library for BK3254/BK3266 based bluetooth audio module (F-6888/F6988)
 
-This library suppors only BK3266 based module with BT name HY5066 form HYT, it is only receiver module and it is using "ASCI" mode of comunication (AT+,COM+,BT+ commands). This library do not support HY5066SR module (tranmiter/receiver), library for this module is [this epository](https://github.com/tomaskovacik/HY5066SR/).
+This library supports both **BK3254** and **BK3266** based Bluetooth audio modules. These modules communicate using "ASCII" mode commands (AT+, COM+, BT+, FM+ prefixes).
+
+## BK3254 vs BK3266 Support
+
+- **BK3254**: Original module, uses AT commands (AT+, COM+, BT+, FM+)
+- **BK3266**: Newer variant with extended features and slightly different command set
+  - Uses BT+ commands for queries (BT+GAD, BT+GNM, BT+GPI) instead of AT+
+  - Additional features: equalizer status query, song time/name retrieval
+  - Enable BK3266 mode by defining `#define BK3266` in BK3254.h before compilation
+
+The library automatically selects the correct command set based on the `BK3266` preprocessor definition. Both modules support standard playback control, volume management, call handling, and FM radio features.
+
+**Note:** This library is for receiver-only modules. For HY5066SR (transmitter/receiver), use [this repository](https://github.com/tomaskovacik/HY5066SR/).
 
 Supported commands based on this datasheet translate by www.onlinedoctranslator.com are on <a href="https://github.com/tomaskovacik/BK3254/wiki/Supported-commands-and-event-send-from-module">this</a> wiki page.
 
